@@ -76,3 +76,12 @@ Create your first JPA entity
 Easily start your REST Web Services
 
 [Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+
+
+### POSTGRE DB
+
+https://medium.com/@pawanpg0963/run-postgresql-with-podman-as-docker-container-86ad392349d1
+
+Then run:
+
+podman run --name postgres -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=changeme -p 5432:5432 -v /var/lib/data -d postgres
