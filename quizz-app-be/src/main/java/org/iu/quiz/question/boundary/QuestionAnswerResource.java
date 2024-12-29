@@ -6,11 +6,13 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Response;
+import org.iu.quiz.Boundary;
 import org.iu.quiz.question.control.QuestionService;
 import org.iu.quiz.question.entity.QuestionAnswer;
 
 import java.util.Objects;
 
+@Boundary
 @Path("/question-answer")
 public class QuestionAnswerResource {
   @Inject QuestionService questionService;
@@ -34,7 +36,7 @@ public class QuestionAnswerResource {
 
   @GET
   @Path("/{id}")
-  Response getQuestionAnswer(@PathParam("id") String id){
-
+  Response getQuestionAnswer(@PathParam("id") String id) {
+    return null;
   }
 }

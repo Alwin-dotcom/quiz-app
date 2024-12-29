@@ -3,7 +3,6 @@ package org.iu.quiz.login.entity;
 import jakarta.persistence.Entity;
 import lombok.NoArgsConstructor;
 
-@Entity
 @NoArgsConstructor
 public class User {
   public String userName;

@@ -1,9 +1,11 @@
 package org.iu.quiz.question.control;
 
+import org.iu.quiz.Control;
 import org.iu.quiz.question.entity.QuestionAnswer;
 
 import java.util.List;
 
+@Control
 public class QuestionService {
   public List<QuestionAnswer> getQuestions() {
     try {

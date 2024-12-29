@@ -3,8 +3,11 @@ package org.iu.quiz.login.control;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import org.iu.quiz.Control;
 import org.iu.quiz.login.entity.User;
 
+
+@Control
 public class LoginService {
   @Inject EntityManager em;
 
