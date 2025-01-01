@@ -19,9 +19,13 @@ const Page = () => {
             {/* Rechtes Div - Weißer Bereich */}
             <div className="w-1/2 flex flex-col items-center  justify-center">
                 <h1 className="text-5xl text-seaBlue font-bold mb-4">Willkommen</h1>
-                <h2 className="text-2xl text-seaBlue">Login</h2>
 
-                <LoginForm/>
+
+                <div className="flex flex-col items-center justify-center mt-20 ">
+                    <h2 className="text-2xl text-seaBlue">Login</h2>
+                    <LoginForm/>
+                </div>
+
             </div>
 
         </div>

@@ -5,27 +5,34 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TextField, Button, Box } from "@mui/material";
 import { LoginFormValues,loginSchema } from "@/Schemas/schema";
-
+import {DevTool} from "@hookform/devtools";
 
 const LoginForm = () => {
-    const {
-        handleSubmit,
-        control,
-        formState: { errors },
-    } = useForm<LoginFormValues>({
-        resolver: zodResolver(loginSchema),
-    });
+
+
+    const user = {
+        email: "alizadeh1412@gmail.com",
+        password: "123456",
+    };
+
+    const {handleSubmit, control, formState: { errors },} = useForm<LoginFormValues>({mode:"all", resolver: zodResolver(loginSchema),});
+
+
+
+
 
     const onSubmit = (data: LoginFormValues) => {
         console.log("Form Data:", data);
-        // Hier kannst du eine API-Anfrage starten
+        if (data.email === user.email && data.password === user.password) {
+            alert("Login successful!");
+        }
     };
 
     return (
         <Box
             component="form"
             onSubmit={handleSubmit(onSubmit)}
-            sx={{ display: "flex", flexDirection: "column", gap: 2, width: 300, margin: "auto", mt: 5 }}
+            sx={{ display: "flex", flexDirection: "column", gap: 2, width: 300, mt:2}}
         >
             {/* E-Mail-Feld */}
             <Controller
@@ -64,6 +71,7 @@ const LoginForm = () => {
             <Button type="submit" variant="contained" color="primary">
                 Login
             </Button>
+            <DevTool control={control} />
         </Box>
     );
 };
