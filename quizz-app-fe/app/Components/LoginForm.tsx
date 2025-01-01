@@ -6,11 +6,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { TextField, Button, Box } from "@mui/material";
 import { LoginFormValues,loginSchema } from "@/Schemas/schema";
 import {DevTool} from "@hookform/devtools";
-import {useNavigate} from "react-router";
+import {useRouter} from "next/navigation";
 
 const LoginForm = () => {
 
-    const navigate = useNavigate();
+    const router = useRouter();
 
     const user = {
         email: "alizadeh1412@gmail.com",
@@ -26,8 +26,7 @@ const LoginForm = () => {
     const onSubmit = (data: LoginFormValues) => {
         console.log("Form Data:", data);
         if (data.email === user.email && data.password === user.password) {
-            alert("Login successful!");
-            navigate("/");
+            router.push("/");
         }
     };
 
