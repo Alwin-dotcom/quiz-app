@@ -24,9 +24,6 @@ const Page = () => {
                 <LoginForm/>
             </div>
 
-
-
-
         </div>
     )
 }

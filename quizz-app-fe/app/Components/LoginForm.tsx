@@ -1,24 +1,71 @@
-"use client"
-import { useForm } from "react-hook-form"
-import {DevTool} from "@hookform/devtools"
+"use client";
+
+import React from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { TextField, Button, Box } from "@mui/material";
+import { LoginFormValues,loginSchema } from "@/Schemas/schema";
+
 
 const LoginForm = () => {
+    const {
+        handleSubmit,
+        control,
+        formState: { errors },
+    } = useForm<LoginFormValues>({
+        resolver: zodResolver(loginSchema),
+    });
 
-    const { register,control } = useForm();
+    const onSubmit = (data: LoginFormValues) => {
+        console.log("Form Data:", data);
+        // Hier kannst du eine API-Anfrage starten
+    };
 
     return (
-        <div className="max-w-md mx-auto mt-20 p-4 bg-white rounded-lg shadow-md">
-            <form className="flex flex-col gap-4">
-                <label htmlFor="email" className="text-lg font-medium">Email</label>
-                <input type="email" id="email" {...register("email")} className="p-2 pl-10 text-sm text-gray-700 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" />
+        <Box
+            component="form"
+            onSubmit={handleSubmit(onSubmit)}
+            sx={{ display: "flex", flexDirection: "column", gap: 2, width: 300, margin: "auto", mt: 5 }}
+        >
+            {/* E-Mail-Feld */}
+            <Controller
+                name="email"
+                control={control}
+                render={({ field }) => (
+                    <TextField
+                        {...field}
+                        label="E-Mail"
+                        variant="outlined"
+                        error={!!errors.email}
+                        helperText={errors.email?.message}
+                        fullWidth
+                    />
+                )}
+            />
 
-                <label htmlFor="password" className="text-lg font-medium">Password</label>
-                <input type="password" id="password" {...register("password")} className="p-2 pl-10 text-sm text-gray-700 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600" />
+            {/* Passwort-Feld */}
+            <Controller
+                name="password"
+                control={control}
+                render={({ field }) => (
+                    <TextField
+                        {...field}
+                        type="password"
+                        label="Passwort"
+                        variant="outlined"
+                        error={!!errors.password}
+                        helperText={errors.password?.message}
+                        fullWidth
+                    />
+                )}
+            />
 
-                <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Login</button>
-            </form>
-            <DevTool control={control} />
-        </div>
-    )
-}
-export default LoginForm
+            {/* Login-Button */}
+            <Button type="submit" variant="contained" color="primary">
+                Login
+            </Button>
+        </Box>
+    );
+};
+
+export default LoginForm;

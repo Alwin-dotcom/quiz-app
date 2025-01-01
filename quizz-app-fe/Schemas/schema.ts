@@ -1,8 +1,10 @@
-import {z} from "zod";
+import { z } from "zod";
 
+// Zod-Schema für die Validierung
 export const loginSchema = z.object({
-    name: z.string().min(2, {message: "Name muss mindestens 2 Zeichen lang sein"}),
-    email: z.string().email({message: "Email Adresse ist nicht gültig"}),
-})
+    email: z.string().email("Bitte eine gültige E-Mail eingeben."),
+    password: z.string().min(6, "Das Passwort muss mindestens 6 Zeichen lang sein."),
+});
 
-export type LoginSchema = z.infer<typeof loginSchema>
+// Typen für das Formular basierend auf dem Schema
+export type LoginFormValues = z.infer<typeof loginSchema>;
