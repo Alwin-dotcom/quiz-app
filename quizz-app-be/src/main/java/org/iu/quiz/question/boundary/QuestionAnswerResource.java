@@ -1,10 +1,7 @@
 package org.iu.quiz.question.boundary;
 
 import jakarta.inject.Inject;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import org.iu.quiz.Boundary;
 import org.iu.quiz.question.control.QuestionService;
@@ -23,9 +20,24 @@ public class QuestionAnswerResource {
     return Response.ok().entity(questionService.getQuestions()).build();
   }
 
+  @GET
+  @Path("/modules")
+  Response getModules() {
+    return Response.ok().entity(questionService.getDistinctModules()).build();
+  }
+
+  @GET
+  @Path("/modules/{module}")
+  Response getQuestionsByModule(@PathParam("module") String module) {
+    return Response.ok().entity(questionService.getQuestionsByModule(module)).build();
+  }
+
   @POST
   @Path("/")
   Response createQuestionAnswer(QuestionAnswer questionAnswer) {
+    if (questionAnswer.answers.size() != 3) {
+      return Response.status(404).build();
+    }
     final var response = questionService.createQuestion(questionAnswer);
     if (Objects.nonNull(response)) {
       return Response.ok().entity(response).build();
@@ -34,9 +46,14 @@ public class QuestionAnswerResource {
     }
   }
 
-  @GET
-  @Path("/{id}")
-  Response getQuestionAnswer(@PathParam("id") String id) {
-    return null;
+  @PUT
+  @Path("/")
+  Response updateQuestionAnswer(QuestionAnswer questionAnswer) {
+    final var result = questionService.updateQuestionAnswer(questionAnswer);
+    if (Objects.nonNull(result)) {
+      return Response.ok().entity(result).build();
+    } else {
+      return Response.serverError().build();
+    }
   }
 }
