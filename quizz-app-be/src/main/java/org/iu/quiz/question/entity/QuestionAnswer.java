@@ -20,9 +20,8 @@ public class QuestionAnswer extends PanacheEntity {
   @JdbcTypeCode(SqlTypes.JSON)
   public List<Answer> answers;
 
-  @Enumerated(EnumType.STRING)
   @Column(name = "module")
-  public Module module;
+  public String module;
 
   @CreationTimestamp
   public String createdAt;
