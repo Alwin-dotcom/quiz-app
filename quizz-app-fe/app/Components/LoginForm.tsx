@@ -16,7 +16,6 @@ const LoginForm = () => {
         resolver: zodResolver(loginSchema),
     });
 
-    // Login-Handler
     const onSubmit = async (data: LoginFormValues) => {
         try {
             // API-Request an Backend
