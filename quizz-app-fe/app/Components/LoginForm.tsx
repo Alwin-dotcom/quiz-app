@@ -1,34 +1,31 @@
 "use client";
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { TextField, Button, Box } from "@mui/material";
-import { LoginFormValues, loginSchema } from "@/Schemas/schema";
-import { DevTool } from "@hookform/devtools";
+import { Button, TextField, Box } from "@mui/material";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import {LoginFormValues} from "@/Schemas/schema";
 
 const LoginForm = () => {
     const router = useRouter();
 
     const { handleSubmit, control, formState: { errors } } = useForm<LoginFormValues>({
         mode: "all",
-        resolver: zodResolver(loginSchema),
     });
 
     const onSubmit = async (data: LoginFormValues) => {
         try {
-            // API-Request an Backend
-            const response = await axios.post("http://localhost:8080/login", {
+            const response = await axios.post("http://localhost:8080/realms/myrealm/protocol/openid-connect/token", {
+                grant_type: "password",
+                client_id: "RXU0px7H6VylFsSbXLEZa7VqZeaapbEl",
+                client_secret: "NT-JVLzpsPZPfxsk9blaJw-mG-yLO4DH_Tw9Thxki1sdcx7P_m6kNgPTvNabDQf9",
                 username: data.email,
                 password: data.password,
+                scope: "openid profile email",
             });
+            const token = response.data.access_token;
+            localStorage.setItem("authToken", token);
 
-            // Token aus der Antwort speichern
-            const token = response.data.token;
-            localStorage.setItem("authToken", token); // Im LocalStorage speichern
-
-            // Weiterleitung nach erfolgreichem Login
             router.push("/");
         } catch (error) {
             console.error("Login fehlgeschlagen:", error);
@@ -42,7 +39,6 @@ const LoginForm = () => {
             onSubmit={handleSubmit(onSubmit)}
             sx={{ display: "flex", flexDirection: "column", gap: 2, width: 300, mt: 2 }}
         >
-            {/* E-Mail-Feld */}
             <Controller
                 name="email"
                 control={control}
@@ -58,7 +54,6 @@ const LoginForm = () => {
                 )}
             />
 
-            {/* Passwort-Feld */}
             <Controller
                 name="password"
                 control={control}
@@ -75,11 +70,9 @@ const LoginForm = () => {
                 )}
             />
 
-            {/* Login-Button */}
             <Button type="submit" variant="contained" color="primary">
                 Login
             </Button>
-            <DevTool control={control} />
         </Box>
     );
 };
