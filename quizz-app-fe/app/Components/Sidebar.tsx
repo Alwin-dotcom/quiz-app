@@ -1,25 +1,70 @@
-// Sidebar.tsx
 import React from 'react';
+import Image from "next/image";
+import {Button} from "@mui/material";
+import Link from "next/link";
 
 const Sidebar = () => (
-    <div className="flex flex-col max-w-64 bg-seaBlue text-white h-screen">
-        <div className="flex justify-center h-16 bg-seaBlue">
-            <span className="text-xl font-bold mt-7 ">IU Quizly</span>
+    <div className="flex flex-col w-64 bg-seaBlue text-white h-screen">
+        {/* Logo */}
+        <div className="flex justify-center mt-5">
+            <Image src="/logo.svg" alt="Logo" width={170} height={150}/>
         </div>
-        <nav className="flex-1 px-2 py-4">
-            <div className="flex items-center px-4 py-2 mt-20 text-gray-100 hover:bg-gray-700">
 
-                Start
-            </div>
-            <div className="flex items-center px-4 py-2 mt-10 text-gray-100 hover:bg-gray-700">
+        {/* Navigation */}
+        <nav className="flex-1 px-2 py-4 flex flex-col justify-center items-center gap-4">
+            <Link href="/" legacyBehavior>
+                <Button
+                    className="w-1/2 mx-auto flex flex-col items-center border-2 border-white
+                rounded px-4 py-2 text-white hover:bg-hoverBlue focus:ring-2 focus:ring-white"
+                >
+                    <Image src="/Home.png" alt="Logo" width={50} height={50}/>
+                    <span className="mt-2 text-white">Start</span>
+                </Button>
+            </Link>
 
-                Spielen
-            </div>
-            <div className="flex items-center px-4 py-2 mt-10 text-gray-100 hover:bg-gray-700">
+            <Button
+                className="w-1/2 mx-auto flex flex-col items-center border-2 border-white rounded px-4
+                 py-2 text-white hover:bg-hoverBlue focus:ring-2 focus:ring-white"
+            >
+                <Image src="/Play.svg" alt="Logo" width={50} height={50}/>
+                <span className="mt-2 text-white">Spielen</span>
+            </Button>
 
-                Bibliothek
-            </div>
+            <Button
+                className="w-1/2 mx-auto flex flex-col items-center border-2 border-white rounded
+                 px-4 py-2 text-white hover:bg-hoverBlue focus:ring-2 focus:ring-white"
+            >
+                <Image src="/Books.svg" alt="Logo" width={50} height={50}/>
+                <span className="mt-2 text-white">Bibliothek</span>
+            </Button>
         </nav>
+
+        {/* Abmelden-Button */}
+        <div className="px-2 py-4 flex flex-col gap-4 items-center ">
+            <Button
+                className="w-1/2 mx-auto flex flex-col items-center border-2 border-white rounded px-4 py-2
+                 text-white hover:bg-hoverBlue focus:ring-2 focus:ring-white"
+            >
+                <Image src="/Customer.svg" alt="Logo" width={50} height={50}/>
+                <span className="mt-2 text-white">Profil</span>
+            </Button>
+
+            <Button
+
+                variant="contained"
+                sx={{
+                    backgroundColor: 'white',
+                    color: 'black',
+                    width: '70%',
+                    margin: '0 auto',
+                    '&:hover': {
+                        backgroundColor: '#f0f0f0',
+                    }
+                }}
+            >
+                Abmelden
+            </Button>
+        </div>
     </div>
 );
 
