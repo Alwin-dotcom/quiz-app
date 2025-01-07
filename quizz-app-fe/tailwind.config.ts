@@ -10,7 +10,7 @@ export default {
         extend: {
             colors: {
                 seaBlue: '#060440',
-                hoverBlue: '#cacfe9',
+                hoverBlue: '#b8c1eb',
             },
         },
     },
