@@ -1,5 +1,6 @@
 package org.iu.quiz;
 
+import io.quarkus.security.Authenticated;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.inject.Stereotype;
@@ -16,4 +17,5 @@ import java.lang.annotation.Target;
 @RequestScoped
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
+@Authenticated
 public @interface Boundary {}
