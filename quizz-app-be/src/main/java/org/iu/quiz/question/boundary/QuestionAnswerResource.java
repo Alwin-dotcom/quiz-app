@@ -16,25 +16,25 @@ public class QuestionAnswerResource {
 
   @GET
   @Path("/")
-  Response getQuestions() {
+  public Response getQuestions() {
     return Response.ok().entity(questionService.getQuestions()).build();
   }
 
   @GET
   @Path("/modules")
-  Response getModules() {
+  public Response getModules() {
     return Response.ok().entity(questionService.getDistinctModules()).build();
   }
 
   @GET
   @Path("/modules/{module}")
-  Response getQuestionsByModule(@PathParam("module") String module) {
+  public Response getQuestionsByModule(@PathParam("module") String module) {
     return Response.ok().entity(questionService.getQuestionsByModule(module)).build();
   }
 
   @POST
   @Path("/")
-  Response createQuestionAnswer(QuestionAnswer questionAnswer) {
+  public Response createQuestionAnswer(QuestionAnswer questionAnswer) {
     if (questionAnswer.answers.size() != 3) {
       return Response.status(404).build();
     }
@@ -48,7 +48,7 @@ public class QuestionAnswerResource {
 
   @PUT
   @Path("/")
-  Response updateQuestionAnswer(QuestionAnswer questionAnswer) {
+  public Response updateQuestionAnswer(QuestionAnswer questionAnswer) {
     final var result = questionService.updateQuestionAnswer(questionAnswer);
     if (Objects.nonNull(result)) {
       return Response.ok().entity(result).build();
