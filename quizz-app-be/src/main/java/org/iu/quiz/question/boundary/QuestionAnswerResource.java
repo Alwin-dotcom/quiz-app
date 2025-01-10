@@ -1,5 +1,6 @@
 package org.iu.quiz.question.boundary;
 
+import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
@@ -11,6 +12,7 @@ import java.util.Objects;
 
 @Boundary
 @Path("/question-answer")
+@Authenticated
 public class QuestionAnswerResource {
   @Inject QuestionService questionService;
 

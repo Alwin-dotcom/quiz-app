@@ -24,6 +24,13 @@ public class LoginResource {
   @IdToken
   JsonWebToken idToken;
 
+  @GET
+  @Authenticated
+  @Produces(MediaType.TEXT_PLAIN)
+  public String hello() {
+    return "Hello, " + idToken.getName();
+  }
+
   @POST
   Response login(String username, String password) {
     final var user = loginService.login(username, password);
@@ -32,12 +39,5 @@ public class LoginResource {
     } else {
       return Response.status(403).build();
     }
-  }
-
-  @GET
-  @Authenticated
-  @Produces(MediaType.TEXT_PLAIN)
-  public String hello() {
-    return "Hello, " + idToken.getName();
   }
 }
