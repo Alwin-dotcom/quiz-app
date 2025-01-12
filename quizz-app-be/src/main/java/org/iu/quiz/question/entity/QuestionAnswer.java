@@ -2,6 +2,8 @@ package org.iu.quiz.question.entity;
 
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -24,7 +26,7 @@ public class QuestionAnswer extends PanacheEntity {
   public String module;
 
   @CreationTimestamp
-  public String createdAt;
+  public LocalDateTime createdAt;
 
   public String creator;
 }

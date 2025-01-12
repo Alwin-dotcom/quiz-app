@@ -2,6 +2,7 @@ package org.iu.quiz.question.boundary;
 
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
 import org.iu.quiz.Boundary;
@@ -36,8 +37,9 @@ public class QuestionAnswerResource {
 
   @POST
   @Path("/")
+  @Transactional
   public Response createQuestionAnswer(QuestionAnswer questionAnswer) {
-    if (questionAnswer.answers.size() != 3) {
+    if (questionAnswer.answers.size() != 4) {
       return Response.status(404).build();
     }
     final var response = questionService.createQuestion(questionAnswer);
@@ -50,6 +52,7 @@ public class QuestionAnswerResource {
 
   @PUT
   @Path("/")
+  @Transactional
   public Response updateQuestionAnswer(QuestionAnswer questionAnswer) {
     final var result = questionService.updateQuestionAnswer(questionAnswer);
     if (Objects.nonNull(result)) {
