@@ -2,12 +2,11 @@ package org.iu.quiz.question.control;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
-import org.iu.quiz.Control;
-import org.iu.quiz.question.entity.QuestionAnswer;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.iu.quiz.Control;
+import org.iu.quiz.question.entity.QuestionAnswer;
 
 @Control
 public class QuestionService {
@@ -42,8 +41,9 @@ public class QuestionService {
     }
   }
 
-  public QuestionAnswer createQuestion(QuestionAnswer questionAnswer) {
+  public QuestionAnswer createQuestion(QuestionAnswer questionAnswer, String creator) {
     try {
+      questionAnswer.creator = creator;
       questionAnswer.persistAndFlush();
       return QuestionAnswer.findById(questionAnswer.id);
 
@@ -56,9 +56,10 @@ public class QuestionService {
   public QuestionAnswer updateQuestionAnswer(QuestionAnswer questionAnswer) {
     try {
       QuestionAnswer.update(
-          "set question=?1 and answers =?2 where id=?3",
+          "question = ?1, answers = ?2, module=?3 where id = ?4",
           questionAnswer.question,
           questionAnswer.answers,
+          questionAnswer.module,
           questionAnswer.id);
       return QuestionAnswer.findById(questionAnswer.id);
     } catch (Exception e) {
