@@ -3,19 +3,17 @@ package org.iu.quiz.question.boundary;
 import io.quarkus.oidc.IdToken;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
-import jakarta.json.JsonObject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
+import java.util.Objects;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.iu.quiz.Boundary;
 import org.iu.quiz.exceptions.ValidationException;
 import org.iu.quiz.question.control.QuestionService;
 import org.iu.quiz.question.entity.QuestionAnswer;
-
-import java.util.Objects;
 
 @Boundary
 @Path("/question-answer")
