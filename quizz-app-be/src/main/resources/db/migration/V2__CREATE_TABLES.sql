@@ -8,4 +8,4 @@ question text,
 primary key (id));
 
 
-create sequence question_answer_SEQ start with 1 increment by 1;
+create sequence seq start with 1 increment by 50;
