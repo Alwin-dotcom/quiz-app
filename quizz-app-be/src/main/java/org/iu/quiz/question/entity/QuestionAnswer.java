@@ -11,8 +11,8 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 @Entity
-@Table(name = "question_answer")
-@SequenceGenerator(schema = "iu", name = "question_answer_seq")
+@Table(name = "question_answer", schema = "quizapp")
+@SequenceGenerator(name = "question_answer_seq", sequenceName = "question_answer_seq")
 public class QuestionAnswer extends PanacheEntity {
 
   @Column(name = "question")
