@@ -11,7 +11,7 @@ export default function ProfilePage() {
         handleSubmit,
         formState: {errors},
     } = useForm<ProfileFormValues>({
-        resolver: zodResolver(profileSchema),
+        resolver: zodResolver(profileSchema), mode: "all",
     });
 
     const onSubmit = (data: ProfileFormValues) => {
@@ -121,19 +121,28 @@ export default function ProfilePage() {
                     )}
                 />
 
-                <Button
-                    type="submit"
-                    variant="contained"
-                    sx={{
-                        width: '100%',
-                        backgroundColor: '#060440',
-                        borderRadius: 5,
-                        py: 3.5,
-                        mt: 3,
-                    }}
-                >
-                    Profil speichern
-                </Button>
+                <div className="flex gap-2 justify-center">
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        sx={{
+                            backgroundColor: '#060440',
+                            borderRadius: 2,
+
+                        }}
+                    >
+                        speichern
+                    </Button>
+                    <Button
+                        type="submit"
+                        variant="outlined"
+                        sx={{
+                            borderRadius: 2,
+                        }}
+                    >
+                        Abbrechen
+                    </Button>
+                </div>
             </form>
         </Box>
     );
