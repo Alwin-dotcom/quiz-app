@@ -56,11 +56,7 @@ export default function AddQuizModule() {
         );
     };
 
-    const updateAnswerText = (
-        questionIndex: number,
-        answerIndex: number,
-        newText: string
-    ) => {
+    const updateAnswerText = (questionIndex: number, answerIndex: number, newText: string) => {
         setQuizQuestions((prevQuestions) =>
             prevQuestions.map((question, qIndex) =>
                 qIndex === questionIndex
@@ -120,35 +116,37 @@ export default function AddQuizModule() {
             </Typography>
 
             <TextField
-                label="Module Name"
+                label="Modul Kürzel"
                 value={moduleName}
                 onChange={(e) => setModuleName(e.target.value)}
                 sx={{mb: 3, width: "100%"}}
             />
 
             <TextField
-                label="Creator Name"
+                label="Ersteller"
                 value={creatorName}
                 onChange={(e) => setCreatorName(e.target.value)}
                 sx={{mb: 3, width: "100%"}}
             />
 
+            {/*Fragen-Felder*/}
             {quizQuestions.map((question, questionIndex) => (
                 <Box key={questionIndex} sx={{mb: 3, width: "100%"}}>
                     <TextField
-                        label={`Question ${questionIndex + 1}`}
+                        label={`Frage ${questionIndex + 1}`}
                         value={question.text}
                         onChange={(e) => updateQuestionText(questionIndex, e.target.value)}
                         sx={{mb: 2, width: "100%"}}
                     />
 
+                    {/*Anwortfelder*/}
                     {question.answers.map((answer, answerIndex) => (
                         <Box
                             key={answerIndex}
                             sx={{display: "flex", alignItems: "center", mb: 1}}
                         >
                             <TextField
-                                label={`Answer ${answerIndex + 1}`}
+                                label={`Antwort ${answerIndex + 1}`}
                                 value={answer.text}
                                 onChange={(e) =>
                                     updateAnswerText(questionIndex, answerIndex, e.target.value)
@@ -171,6 +169,23 @@ export default function AddQuizModule() {
                             />
                         </Box>
                     ))}
+                    {/*Speichern-Button*/}
+                    <Box className="flex flex-row justify-center items-center w-full mb-3">
+                        <Button
+                            onClick={submitQuiz}
+                            sx={{
+                                width: 200,
+                                height: 50,
+                                backgroundColor: "#060440",
+                                borderRadius: 5,
+                                py: 3.5,
+                                mt: 5,
+                            }}
+                            variant="contained"
+                        >
+                            Frage speichern
+                        </Button>
+                    </Box>
                 </Box>
             ))}
 
@@ -191,22 +206,6 @@ export default function AddQuizModule() {
                 </Button>
             </Box>
 
-            <Box className="flex flex-row justify-center items-center w-full mb-3">
-                <Button
-                    onClick={submitQuiz}
-                    sx={{
-                        width: 200,
-                        height: 50,
-                        backgroundColor: "#060440",
-                        borderRadius: 5,
-                        py: 3.5,
-                        mt: 5,
-                    }}
-                    variant="contained"
-                >
-                    Frage speichern
-                </Button>
-            </Box>
         </Box>
     );
 }
