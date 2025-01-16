@@ -16,7 +16,7 @@ export default function ListItem({items}: ListItemProps) {
             className="border rounded-xl shadow"
             style={{
                 width: '100%',
-                maxWidth: 500,
+                maxWidth: 800,
                 backgroundColor: '#D9D9D9',
                 padding: 0,
                 margin: 0,
@@ -27,6 +27,7 @@ export default function ListItem({items}: ListItemProps) {
                     textAlign: 'center',
                     fontSize: 15,
                     fontWeight: 'bold',
+                    color: '#060440',
                 }}
                 component="div"
                 id="nested-list-subheader"
@@ -38,15 +39,15 @@ export default function ListItem({items}: ListItemProps) {
                 }}/>
             </ListSubheader>
             <FixedSizeList
-                height={200}
-                width={500}
+                height={400}
+                width={800}
                 itemSize={50}
                 itemCount={items.length}
             >
                 {({index, style}: { index: number, style: React.CSSProperties }) => (
                     <div style={style}>
                         <ListItemButton key={items[index].id}>
-                            <ListItemText primary={`${index + 1}. ${items[index].name}`}/>
+                            <ListItemText primary={`${index + 1}.     ${items[index].name}`}/>
                         </ListItemButton>
                     </div>
                 )}
