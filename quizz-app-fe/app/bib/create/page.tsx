@@ -19,7 +19,7 @@ interface Answer {
 interface Question {
     text: string;
     answers: Answer[];
-    correctAnswerIndex: number;
+    correctAnswerIndex: any;
 }
 
 export default function AddQuizModule() {
@@ -27,21 +27,21 @@ export default function AddQuizModule() {
     const [creatorName, setCreatorName] = useState("");
     const [quizQuestions, setQuizQuestions] = useState<Question[]>([{
         text: "",
-        answers: Array(4).fill({text: "", isCorrect: false}),
-        correctAnswerIndex: 0,
-    },
-    ]);
+        answers: Array.from({length: 4}, () => ({text: "", isCorrect: false})),
+        correctAnswerIndex: null,
+    }]);
 
     const addQuestion = () => {
         setQuizQuestions((prevQuestions) => [
             ...prevQuestions,
             {
                 text: "",
-                answers: Array(4).fill({text: "", isCorrect: false}),
-                correctAnswerIndex: 0,
+                answers: Array.from({length: 4}, () => ({text: "", isCorrect: false})),
+                correctAnswerIndex: null,
             },
         ]);
     };
+
     const updateQuestionText = (questionIndex: number, newText: string) => {
         const updatedQuestions = [...quizQuestions];
         updatedQuestions[questionIndex].text = newText;
@@ -51,7 +51,15 @@ export default function AddQuizModule() {
     const setCorrectAnswer = (questionIndex: number, answerIndex: number) => {
         setQuizQuestions((prevQuestions) =>
             prevQuestions.map((question, qIndex) =>
-                qIndex === questionIndex ? {...question, correctAnswerIndex: answerIndex} : question
+                qIndex === questionIndex
+                    ? {
+                        ...question,
+                        answers: question.answers.map((answer, aIndex) =>
+                            aIndex === answerIndex ? {...answer, isCorrect: true} : {...answer, isCorrect: false}
+                        ),
+                        correctAnswerIndex: answerIndex,
+                    }
+                    : question
             )
         );
     };
@@ -71,17 +79,21 @@ export default function AddQuizModule() {
         );
     };
 
-    const submitQuiz = async () => {
+    const submitQuiz = async (questionIndex: number) => {
+        const currentQuestion = quizQuestions[questionIndex];
+
         const quizPayload = {
-            moduleName,
+            module: moduleName,
             creator: creatorName,
-            questions: quizQuestions.map((question) => ({
-                questionText: question.text,
-                answers: question.answers,
+            question: currentQuestion.text,
+            answers: currentQuestion.answers.map((answer) => ({
+                answer: answer.text,
+                isCorrect: answer.isCorrect,
             })),
         };
 
         try {
+            console.log("Sending payload:", JSON.stringify(quizPayload, null, 2));
             const response = await axios.post(
                 "http://localhost:8080/quiz-app/resources/question-answer",
                 quizPayload
@@ -156,9 +168,7 @@ export default function AddQuizModule() {
                             <FormControlLabel
                                 control={
                                     <Switch
-                                        checked={
-                                            question.correctAnswerIndex === answerIndex
-                                        }
+                                        checked={question.correctAnswerIndex === answerIndex}
                                         onChange={() =>
                                             setCorrectAnswer(questionIndex, answerIndex)
                                         }
@@ -172,7 +182,7 @@ export default function AddQuizModule() {
                     {/*Speichern-Button*/}
                     <Box className="flex flex-row justify-center items-center w-full mb-3">
                         <Button
-                            onClick={submitQuiz}
+                            onClick={() => submitQuiz(questionIndex)}
                             sx={{
                                 width: 200,
                                 height: 50,
@@ -205,7 +215,6 @@ export default function AddQuizModule() {
                     Weitere Frage hinzufpügen
                 </Button>
             </Box>
-
         </Box>
     );
 }
