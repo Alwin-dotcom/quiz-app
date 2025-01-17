@@ -1,99 +1,73 @@
-'use client'
+'use client';
 import * as React from 'react';
+import axios from 'axios';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
-import {useState} from "react";
-import Button from "@mui/material/Button";
-import AddIcon from '@mui/icons-material/Add';
+import IconButton from '@mui/material/IconButton';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import FilterListIcon from '@mui/icons-material/FilterList';
+import {Button} from "@mui/material";
 import Link from "next/link";
 
-
-interface Column {
-    id: 'modul' | 'kzl' | 'questions';
-    label: string;
-    minWidth?: number;
-    align?: 'right';
-}
-
-const columns: readonly Column[] = [
-    {id: 'modul', label: 'Modul', minWidth: 170},
-    {id: 'kzl', label: 'Kürzel', minWidth: 170, align: 'right'},
-    {id: 'questions', label: 'Anzahl Fragen', minWidth: 170, align: 'right'}
-];
-
-interface Data {
-    modul: string;
-    kzl: string;
+interface Module {
+    name: string;
     questions: number;
 }
 
-function createData(
-    modul: string,
-    kzl: string,
-    questions: number,
-): Data {
-    return {modul, kzl, questions};
-}
+const ModuleTable = () => {
+    const [modules, setModules] = React.useState<Module[]>([]);
+    const [selectedModule, setSelectedModule] = React.useState<string>('');
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-const rows = [
-    createData('India', 'INAS', 1324171354),
-    createData('China', 'CNFV', 1403500365),
-    createData('Italy', 'ITEF', 60483973),
-    createData('United States', 'USEF', 327167434),
-    createData('Canada', 'CACF', 37602103),
-    createData('Australia', 'AUVF', 25475400),
-    createData('Germany', 'DEVD', 83019200),
-    createData('Ireland', 'IEVDS', 4857000),
-    createData('Mexico', 'MXVW', 126577691),
-    createData('Japan', 'JPCS', 126317000),
+    React.useEffect(() => {
+        axios.get('http://localhost:8080/quiz-app/resources/question-answer')
+            .then(response => {
+                const moduleCounts: { [key: string]: number } = {};
+                response.data.forEach((question: any) => {
+                    const {module} = question;
+                    if (!moduleCounts[module]) {
+                        moduleCounts[module] = 0;
+                    }
+                    moduleCounts[module]++;
+                });
 
-];
+                const formattedData = Object.keys(moduleCounts).map(module => ({
+                    name: module,
+                    questions: moduleCounts[module],
+                }));
 
-export default function EnhancedTable() {
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState<number>(10);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [selectedRow, setSelectedRow] = useState<null | Data>(null);
+                setModules(formattedData);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }, []);
 
-    const handleChangePage = (event: unknown, newPage: number) => {
-        setPage(newPage);
-    };
-
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(+event.target.value);
-        setPage(0);
-    };
-
-    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, row: Data) => {
+    const handleModuleSelect = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorEl(event.currentTarget);
-        setSelectedRow(row);
     };
 
     const handleMenuClose = () => {
         setAnchorEl(null);
-        setSelectedRow(null);
     };
 
-    const handleEdit = () => {
-        console.log("Bearbeiten:", selectedRow);
-        handleMenuClose();
+    const handleModuleSelectChange = (module: string) => {
+        setSelectedModule(module);
+        setAnchorEl(null);
     };
 
-    const handleDelete = () => {
-        console.log("Löschen:", selectedRow);
-        handleMenuClose();
-    };
+    const filteredModules = selectedModule
+        ? modules.filter(module => module.name === selectedModule)
+        : modules;
 
     return (
         <div className="flex justify-center flex-col items-center h-screen">
             <div className="flex items-center justify-center">
-                <h1 className="text-2xl text-seaBlue text-center font-bold mb-4">Bibliothek</h1>
+                <h1 className="text-2xl text-seaBlue text-center font-bold mb-4">Quiz auswählen</h1>
             </div>
             <Paper sx={{
                 width: '80%',
@@ -107,69 +81,62 @@ export default function EnhancedTable() {
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead>
                             <TableRow>
-                                {columns.map((column) => (
-                                    <TableCell
-                                        key={column.id}
-                                        align={column.align}
-                                        style={{minWidth: column.minWidth}}
+                                <TableCell>
+                                    Modul
+                                    <IconButton
+                                        aria-controls="module-menu"
+                                        aria-haspopup="true"
+                                        onClick={handleModuleSelect}
+                                        size="small"
                                     >
-                                        {column.label}
-                                    </TableCell>
-                                ))}
+                                        <FilterListIcon/>
+                                    </IconButton>
+                                </TableCell>
+                                <TableCell sx={{textAlign: 'right', minWidth: 150}}>Anzahl Fragen</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {rows.map((row) => {
-                                return (
-                                    <TableRow hover role="checkbox" tabIndex={-1} key={row.modul}>
-                                        {columns.map((column) => {
-                                            const value = row[column.id];
-                                            return (
-                                                <TableCell key={column.id} align={column.align}>
-                                                    {value}
-                                                </TableCell>
-                                            );
-                                        })}
-
-                                    </TableRow>
-                                );
-                            })}
+                            {filteredModules.map(module => (
+                                <TableRow key={module.name}>
+                                    <TableCell>{module.name}</TableCell>
+                                    <TableCell sx={{textAlign: 'right'}}>{module.questions}</TableCell>
+                                </TableRow>
+                            ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[10, 25, 100]}
-                    component="div"
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-
             </Paper>
-            <div className="flex flec-col items-center justify-center gap-4">
-                <Link
-                    href="/bib/create"
-                    legacyBehavior>
-                    <Button
-                        startIcon={<AddIcon/>}
-                        sx={{
-                            width: 200,
-                            height: 50,
-                            backgroundColor: "#060440",
-                            borderRadius: 5,
-                            py: 3.5,
-                            mt: 5
-                        }} variant="contained">
-                        Frage hinzufügen
-                    </Button>
-                </Link>
+            <Menu
+                id="module-menu"
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+            >
+                <MenuItem onClick={() => handleModuleSelectChange('')}>Alle Module</MenuItem>
+                {modules.map(module => (
+                    <MenuItem key={module.name}
+                              onClick={() => handleModuleSelectChange(module.name)}>{module.name}</MenuItem>
+                ))}
+            </Menu>
 
-
-            </div>
+            <Link href="/bib/create" legacyBehavior>
+                <Button
+                    sx={{
+                        width: 200,
+                        height: 50,
+                        backgroundColor: "#060440",
+                        borderRadius: 5,
+                        py: 3.5,
+                        mt: 5,
+                    }}
+                    variant="contained"
+                >
+                    Fragen erstellen
+                </Button>
+            </Link>
 
         </div>
-
     );
-}
+};
+
+export default ModuleTable;
