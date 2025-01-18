@@ -17,20 +17,24 @@ const QuizPage = () => {
     const searchParams = useSearchParams();
     const module = searchParams.get('module');
     console.log("Modul:", module);
-
     const [questions, setQuestions] = useState<Question[]>([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [score, setScore] = useState(0);
     const [isAnswerSelected, setIsAnswerSelected] = useState(false);
     const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
 
+    const fetchQuestions = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8080/quiz-app/resources/question-answer/modules/${module}`);
+            setQuestions(response.data);
+        } catch (error) {
+            console.error('Error fetching questions:', error);
+        }
+    }
+
     useEffect(() => {
         if (module) {
-            axios.get(`http://localhost:8080/quiz-app/resources/question-answer/modules/${module}`)
-                .then((response) => {
-                    setQuestions(response.data);
-                })
-                .catch((error) => console.error('Error fetching questions:', error));
+            fetchQuestions();
         }
     }, [module]);
 
