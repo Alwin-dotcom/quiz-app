@@ -1,5 +1,7 @@
-'use client';
-import * as React from 'react';
+'use client'
+
+import {useState, useEffect} from "react";
+import {useRouter} from 'next/navigation';
 import axios from 'axios';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
@@ -9,24 +11,24 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import FilterListIcon from '@mui/icons-material/FilterList';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
-interface Module {
+interface Page {
     name: string;
-    questions: number;
+    numberOfQuestions: number;
 }
 
 const ModuleTable = () => {
-    const [modules, setModules] = React.useState<Module[]>([]);
-    const [selectedModule, setSelectedModule] = React.useState<string>('');
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [modules, setModules] = useState<Page[]>([]);
+    const router = useRouter();
 
-    React.useEffect(() => {
-        axios.get('http://localhost:8080/quiz-app/resources/question-answer')
-            .then(response => {
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/quiz-app/resources/question-answer');
                 const moduleCounts: { [key: string]: number } = {};
+                {/*aus dem Response die question auslesen und dann an das moduleCounts Objekt anhaengen  */
+                }
                 response.data.forEach((question: any) => {
                     const {module} = question;
                     if (!moduleCounts[module]) {
@@ -35,32 +37,24 @@ const ModuleTable = () => {
                     moduleCounts[module]++;
                 });
 
-                const formattedData = Object.keys(moduleCounts).map(module => ({
+                const formattedData: Page[] = Object.keys(moduleCounts).map(module => ({
                     name: module,
-                    questions: moduleCounts[module],
+                    numberOfQuestions: moduleCounts[module],
                 }));
 
                 setModules(formattedData);
-            })
-            .catch(error => console.error('Error fetching data:', error));
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        };
+
+        fetchData();
     }, []);
 
-    const handleModuleSelect = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
 
-    const handleMenuClose = () => {
-        setAnchorEl(null);
+    const handleStartQuiz = (module: string) => {
+        router.push(`play/quiz/${module}`);
     };
-
-    const handleModuleSelectChange = (module: string) => {
-        setSelectedModule(module);
-        setAnchorEl(null);
-    };
-
-    const filteredModules = selectedModule
-        ? modules.filter(module => module.name === selectedModule)
-        : modules;
 
     return (
         <div className="flex justify-center flex-col items-center h-screen">
@@ -79,43 +73,31 @@ const ModuleTable = () => {
                     <Table stickyHeader aria-label="sticky table">
                         <TableHead>
                             <TableRow>
-                                <TableCell>
-                                    Modul
-                                    <IconButton
-                                        aria-controls="module-menu"
-                                        aria-haspopup="true"
-                                        onClick={handleModuleSelect}
-                                        size="small"
-                                    >
-                                        <FilterListIcon/>
-                                    </IconButton>
-                                </TableCell>
-                                <TableCell sx={{textAlign: 'right', minWidth: 150}}>Anzahl Fragen</TableCell>
+                                <TableCell sx={{width: '30%'}}>Modul</TableCell>
+                                <TableCell sx={{textAlign: 'right', minWidth: 150, width: '30%'}}>Anzahl
+                                    Fragen</TableCell>
+                                <TableCell sx={{width: '40%', textAlign: 'right'}}>Aktionen</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {filteredModules.map(module => (
+                            {modules.map(module => (
                                 <TableRow key={module.name}>
                                     <TableCell>{module.name}</TableCell>
-                                    <TableCell sx={{textAlign: 'right'}}>{module.questions}</TableCell>
+                                    <TableCell sx={{textAlign: 'right'}}>{module.numberOfQuestions}</TableCell>
+                                    <TableCell sx={{textAlign: 'right'}}>
+                                        <IconButton
+                                            color="primary"
+                                            onClick={() => handleStartQuiz(module.name)}
+                                        >
+                                            <PlayArrowIcon/>
+                                        </IconButton>
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
             </Paper>
-            <Menu
-                id="module-menu"
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleMenuClose}
-            >
-                <MenuItem onClick={() => handleModuleSelectChange('')}>Alle Module</MenuItem>
-                {modules.map(module => (
-                    <MenuItem key={module.name}
-                              onClick={() => handleModuleSelectChange(module.name)}>{module.name}</MenuItem>
-                ))}
-            </Menu>
         </div>
     );
 };
