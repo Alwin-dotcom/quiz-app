@@ -1,10 +1,11 @@
-'use client';
+'use client'
 import {useState, useEffect} from 'react';
-import {useRouter} from 'next/router';
+import {useRouter} from 'next/navigation'; // Verwende useRouter für dynamische Routen
 import axios from 'axios';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
+import {useSearchParams} from "next/navigation";
 
 interface Question {
     questionText: string;
@@ -13,7 +14,10 @@ interface Question {
 
 const QuizPage = () => {
     const router = useRouter();
-    const {module} = router.query;
+    const searchParams = useSearchParams();
+    const module = searchParams.get('module');
+    console.log("Modul:", module);
+
     const [questions, setQuestions] = useState<Question[]>([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [score, setScore] = useState(0);
@@ -21,15 +25,14 @@ const QuizPage = () => {
     const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
 
     useEffect(() => {
-        if (router.isReady && module) {
-            axios
-                .get(`http://localhost:8080/quiz-app/resources/question-answer/modules/${module}`)
+        if (module) {
+            axios.get(`http://localhost:8080/quiz-app/resources/question-answer/modules/${module}`)
                 .then((response) => {
                     setQuestions(response.data);
                 })
                 .catch((error) => console.error('Error fetching questions:', error));
         }
-    }, [router.isReady, module]);
+    }, [module]);
 
     const handleAnswerClick = (index: number) => {
         if (isAnswerSelected) return;
@@ -45,12 +48,17 @@ const QuizPage = () => {
     const handleNextQuestion = () => {
         setSelectedAnswer(null);
         setIsAnswerSelected(false);
+
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex((prev) => prev + 1);
         } else {
             router.push(`/quiz/${module}/result?score=${score}&total=${questions.length}`);
         }
     };
+
+    if (!module) {
+        console.log("Modul nicht gefunden", module);
+    }
 
     if (questions.length === 0) {
         return <Typography>Fragen werden geladen...</Typography>;
@@ -78,7 +86,13 @@ const QuizPage = () => {
                         <Button
                             key={index}
                             variant="contained"
-                            color={selectedAnswer === index ? (answer.isCorrect ? 'success' : 'error') : 'primary'}
+                            color={
+                                selectedAnswer === index
+                                    ? answer.isCorrect
+                                        ? 'success'
+                                        : 'error'
+                                    : 'primary'
+                            }
                             sx={{
                                 display: 'block',
                                 width: '100%',

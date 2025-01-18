@@ -53,7 +53,7 @@ const ModuleTable = () => {
 
 
     const handleStartQuiz = (module: string) => {
-        router.push(`play/quiz/${module}`);
+        router.push(`/play/${module}`);
     };
 
     return (
