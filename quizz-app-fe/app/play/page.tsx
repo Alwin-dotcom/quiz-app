@@ -77,7 +77,7 @@ const ModuleTable = () => {
                                     <TableCell>{module.name}</TableCell>
                                     <TableCell sx={{textAlign: 'right'}}>{module.numberOfQuestions}</TableCell>
                                     <TableCell sx={{textAlign: 'right'}}>
-                                        <Link href={`/play/${module.name}`} passHref>
+                                        <Link href={`/play/${module.name}`} passHref legacyBehavior>
                                             <IconButton color="primary">
                                                 <PlayArrowIcon/>
                                             </IconButton>
