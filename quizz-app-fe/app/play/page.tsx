@@ -1,8 +1,8 @@
 'use client'
 
 import {useState, useEffect} from "react";
-import {useRouter} from 'next/navigation';
 import axios from 'axios';
+import Link from 'next/link';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -20,41 +20,33 @@ interface Page {
 
 const ModuleTable = () => {
     const [modules, setModules] = useState<Page[]>([]);
-    const router = useRouter();
+
+
+    const fetchData = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/quiz-app/resources/question-answer');
+            const moduleCounts: { [key: string]: number } = {};
+            // Aus dem Response die Module und Frageanzahlen ermitteln
+            response.data.forEach((question: any) => {
+                const {module} = question;
+                if (!moduleCounts[module]) {
+                    moduleCounts[module] = 0;
+                }
+                moduleCounts[module]++;
+            });
+            const formattedData: Page[] = Object.keys(moduleCounts).map(module => ({
+                name: module,
+                numberOfQuestions: moduleCounts[module],
+            }));
+            setModules(formattedData);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get('http://localhost:8080/quiz-app/resources/question-answer');
-                const moduleCounts: { [key: string]: number } = {};
-                {/*aus dem Response die question auslesen und dann an das moduleCounts Objekt anhaengen  */
-                }
-                response.data.forEach((question: any) => {
-                    const {module} = question;
-                    if (!moduleCounts[module]) {
-                        moduleCounts[module] = 0;
-                    }
-                    moduleCounts[module]++;
-                });
-
-                const formattedData: Page[] = Object.keys(moduleCounts).map(module => ({
-                    name: module,
-                    numberOfQuestions: moduleCounts[module],
-                }));
-
-                setModules(formattedData);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
         fetchData();
     }, []);
-
-
-    const handleStartQuiz = (module: string) => {
-        router.push(`/play/${module}`);
-    };
 
     return (
         <div className="flex justify-center flex-col items-center h-screen">
@@ -85,12 +77,11 @@ const ModuleTable = () => {
                                     <TableCell>{module.name}</TableCell>
                                     <TableCell sx={{textAlign: 'right'}}>{module.numberOfQuestions}</TableCell>
                                     <TableCell sx={{textAlign: 'right'}}>
-                                        <IconButton
-                                            color="primary"
-                                            onClick={() => handleStartQuiz(module.name)}
-                                        >
-                                            <PlayArrowIcon/>
-                                        </IconButton>
+                                        <Link href={`/play/${module.name}`} passHref>
+                                            <IconButton color="primary">
+                                                <PlayArrowIcon/>
+                                            </IconButton>
+                                        </Link>
                                     </TableCell>
                                 </TableRow>
                             ))}

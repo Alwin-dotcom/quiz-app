@@ -17,6 +17,8 @@ const QuizPage = () => {
     const searchParams = useSearchParams();
     const module = searchParams.get('module');
     console.log("Modul:", module);
+
+    
     const [questions, setQuestions] = useState<Question[]>([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [score, setScore] = useState(0);
