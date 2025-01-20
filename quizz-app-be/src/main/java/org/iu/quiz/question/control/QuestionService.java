@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import org.iu.quiz.Control;
 import org.iu.quiz.question.entity.QuestionAnswer;
+import org.iu.quiz.question.entity.Status;
 
 @Control
 public class QuestionService {
@@ -64,6 +65,26 @@ public class QuestionService {
       return QuestionAnswer.findById(questionAnswer.id);
     } catch (Exception e) {
       System.out.println("Error during updating questionAnswer");
+      return null;
+    }
+  }
+
+  public QuestionAnswer approveQuestionAnswer(String id){
+    try{
+      QuestionAnswer.update("status=?1 where id =?2", Status.APPROVED, id);
+      return QuestionAnswer.findById(id);
+    }catch (Exception e){
+      System.err.println("Error approving questionAnswer: " + e.getMessage());
+      return null;
+    }
+  }
+
+  public QuestionAnswer rejectQuestionAnswer(String id){
+    try{
+      QuestionAnswer.update("status=?1 where id =?2", Status.REJECTED, id);
+      return QuestionAnswer.findById(id);
+    }catch (Exception e){
+      System.err.println("Error rejecting questionAnswer: " + e.getMessage());
       return null;
     }
   }
