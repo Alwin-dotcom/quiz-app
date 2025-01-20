@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import ListItem from "@/app/Components/ListItem";
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import Link from "next/link";
+import UserInfo from "@/app/Components/UserInfo";
 
 
 const bestenliste = [
@@ -26,7 +27,6 @@ const page = () => {
                     <ListItem items={bestenliste} key={module.id}/>
                 </div>
             </div>
-
             <div className="flex justify-center mt-10 mb-10 ">
 
                 <Link href="/play" legacyBehavior>
