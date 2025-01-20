@@ -2,6 +2,7 @@
 import {useState, useEffect} from 'react';
 import {useParams, useRouter} from 'next/navigation';
 import axios from 'axios';
+import {Button} from "@mui/material";
 
 interface Answer {
     answer: string;
@@ -79,20 +80,22 @@ const QuizPage = () => {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen  p-4">
-            <div className="bg-white shadow-lg rounded-lg w-full max-w-xl p-6">
-                <h1 className="text-2xl font-bold text-gray-800 mb-4">
-                    Frage {currentQuestionIndex + 1} / {questions.length}
-                </h1>
-                <p className="text-lg text-gray-700 mb-6">{currentQuestion.question}</p>
-                <div className="flex flex-col space-y-4">
+        <div className="flex flex-col items-center justify-center h-screen p-4">
+            <div className="bg-white-100 shadow-lg  rounded-lg w-full max-w-7xl p-6">
+                <div className="bg-[#D9D9D9] rounded-lg p-4">
+                    <h1 className="text-2xl bg- text-center font-bold text-seaBlue mb-4">
+                        Frage ({currentQuestionIndex + 1} / {questions.length})
+                    </h1>
+                    <p className="text-lg text-center text-seaBlue mb-6">{currentQuestion.question}</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4 mt-10">
                     {currentQuestion.answers.map((answer, index) => (
                         <label
                             key={index}
                             className={`flex items-center p-3 border rounded-lg cursor-pointer ${
                                 selectedAnswer === index
                                     ? 'bg-blue-100 border-blue-500'
-                                    : 'bg-gray-50 border-gray-300'
+                                    : 'bg-[#D9D9D9] border-gray-300'
                             }`}
                         >
                             <input
@@ -105,19 +108,25 @@ const QuizPage = () => {
                         </label>
                     ))}
                 </div>
-                <button
-                    onClick={handleNextQuestion}
-                    disabled={selectedAnswer === null}
-                    className={`mt-6 w-full py-2 px-4 rounded-lg text-white font-semibold ${
-                        selectedAnswer === null
-                            ? 'bg-gray-400 cursor-not-allowed'
-                            : 'bg-blue-500 hover:bg-blue-600'
-                    }`}
-                >
-                    {currentQuestionIndex < questions.length - 1
-                        ? 'Weiter'
-                        : 'Ergebnis anzeigen'}
-                </button>
+                <div className="flex justify-center mt-4">
+                    <Button
+                        onClick={handleNextQuestion}
+                        sx={{
+                            width: 200,
+                            height: 50,
+                            backgroundColor: "#060440",
+                            borderRadius: 5,
+                            py: 3.5,
+                        }}
+                        variant="contained"
+                        disabled={selectedAnswer === null}
+                    >
+                        {currentQuestionIndex < questions.length - 1
+                            ? 'Weiter'
+                            : 'Ergebnis anzeigen'}
+                    </Button>
+                </div>
+
             </div>
         </div>
     );

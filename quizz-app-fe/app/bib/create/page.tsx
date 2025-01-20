@@ -49,7 +49,7 @@ export default function AddQuizModule() {
     };
 
     const setCorrectAnswer = (questionIndex: number, answerIndex: number) => {
-        setQuizQuestions((prevQuestions) =>
+        setQuizQuestions(prevQuestions =>
             prevQuestions.map((question, qIndex) =>
                 qIndex === questionIndex
                     ? {
