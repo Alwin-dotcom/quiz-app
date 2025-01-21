@@ -1,2 +1,4 @@
 /quizz-app-be/.env
 /quizz-app-be/target/
+/quizz-app-fe/node_modules
+/quizz-app-fe/.next

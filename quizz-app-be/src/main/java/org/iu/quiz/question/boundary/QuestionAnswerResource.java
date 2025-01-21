@@ -71,4 +71,28 @@ public class QuestionAnswerResource {
       return Response.serverError().build();
     }
   }
+
+  @POST
+  @Path("/{id}/APPROVED")
+  @Transactional
+  public Response approveQuestionAnswer(@PathParam("id") String id) {
+    final var questionAnswer = questionService.approveQuestionAnswer(id);
+    if (Objects.nonNull(questionAnswer)) {
+      return Response.ok().entity(questionAnswer).build();
+    } else {
+      return Response.serverError().build();
+    }
+  }
+
+  @POST
+  @Path("/{id}/REJECTED")
+  @Transactional
+  public Response rejectQuestionAnswer(@PathParam("id") String id) {
+    final var questionAnswer = questionService.rejectQuestionAnswer(id);
+    if (Objects.nonNull(questionAnswer)) {
+      return Response.ok().entity(questionAnswer).build();
+    } else {
+      return Response.serverError().build();
+    }
+  }
 }
