@@ -21,7 +21,7 @@ const QuizPage = () => {
     const [questions, setQuestions] = useState<Question[]>([]);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-    const [score, setScore] = useState(0);
+    const [score, setScore] = useState<number>(0);
 
     const fetchQuestions = async () => {
         try {
@@ -40,34 +40,24 @@ const QuizPage = () => {
         }
     }, [module]);
 
+    // Aktuelle Frage basiert auf das Fragen Index im useState
     const currentQuestion = questions[currentQuestionIndex];
+    console.log("Current Score:", score)
+
 
     const handleAnswerSelect = (index: number) => {
         setSelectedAnswer(index);
+        if (currentQuestion.answers[index].isCorrect) {
+            setScore((prevScore) => prevScore + 1);
+        }
     };
 
     const handleNextQuestion = () => {
-        if (selectedAnswer !== null) {
-            // Prüfen, ob die Antwort korrekt ist
-            if (questions[currentQuestionIndex].answers[selectedAnswer].isCorrect) {
-                setScore((prevScore) => prevScore + 1);
-            }
-        }
-        // Zur nächsten Frage oder zur Ergebnisseite
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
-            setSelectedAnswer(null); // Auswahl zurücksetzen
+            setSelectedAnswer(null);
         } else {
-            // Zur Ergebnisseite navigieren
-            router.push(
-                `/quiz/result?score=${
-                    score +
-                    (selectedAnswer !== null &&
-                    questions[currentQuestionIndex].answers[selectedAnswer].isCorrect
-                        ? 1
-                        : 0)
-                }&total=${questions.length}`
-            );
+            router.push(`/play/${module}/${score}`);
         }
     };
 
@@ -81,6 +71,8 @@ const QuizPage = () => {
 
     return (
         <div className="flex flex-col items-center justify-center h-screen p-4">
+
+            <div>Deine Punkte: {score}</div>
             <div className="bg-white-100 shadow-lg  rounded-lg w-full max-w-7xl p-6">
                 <div className="bg-[#D9D9D9] rounded-lg p-4">
                     <h1 className="text-2xl bg- text-center font-bold text-seaBlue mb-4">
@@ -119,14 +111,12 @@ const QuizPage = () => {
                             py: 3.5,
                         }}
                         variant="contained"
-                        disabled={selectedAnswer === null}
                     >
                         {currentQuestionIndex < questions.length - 1
                             ? 'Weiter'
                             : 'Ergebnis anzeigen'}
                     </Button>
                 </div>
-
             </div>
         </div>
     );
