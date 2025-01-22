@@ -42,7 +42,6 @@ const QuizPage = () => {
 
     // Aktuelle Frage basiert auf das Fragen Index im useState
     const currentQuestion = questions[currentQuestionIndex];
-    console.log("Current Score:", score)
 
 
     const handleAnswerSelect = (index: number) => {
@@ -57,7 +56,7 @@ const QuizPage = () => {
             setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
             setSelectedAnswer(null);
         } else {
-            router.push(`/play/${module}/${score}`);
+            router.push(`/play/${module}/${score}/${questions.length}`);
         }
     };
 
@@ -71,8 +70,6 @@ const QuizPage = () => {
 
     return (
         <div className="flex flex-col items-center justify-center h-screen p-4">
-
-            <div>Deine Punkte: {score}</div>
             <div className="bg-white-100 shadow-lg  rounded-lg w-full max-w-7xl p-6">
                 <div className="bg-[#D9D9D9] rounded-lg p-4">
                     <h1 className="text-2xl bg- text-center font-bold text-seaBlue mb-4">

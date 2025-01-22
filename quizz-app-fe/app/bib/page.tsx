@@ -118,7 +118,6 @@ const ModuleTable = () => {
                               onClick={() => handleModuleSelectChange(module.name)}>{module.name}</MenuItem>
                 ))}
             </Menu>
-
             <Link href="/bib/create" legacyBehavior>
                 <Button
                     sx={{
@@ -134,7 +133,6 @@ const ModuleTable = () => {
                     Fragen erstellen
                 </Button>
             </Link>
-
         </div>
     );
 };

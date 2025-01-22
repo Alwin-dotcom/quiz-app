@@ -12,7 +12,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import IconButton from '@mui/material/IconButton';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import UserInfo from "@/app/Components/UserInfo";
+import {useRouter} from "next/navigation";
+
 
 interface Page {
     name: string;
