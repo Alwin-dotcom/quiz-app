@@ -12,8 +12,6 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import IconButton from '@mui/material/IconButton';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import {useRouter} from "next/navigation";
-
 
 interface Page {
     name: string;
@@ -23,26 +21,24 @@ interface Page {
 const ModuleTable = () => {
     const [modules, setModules] = useState<Page[]>([]);
 
-
     const fetchData = async () => {
         try {
-            const response = await axios.get('http://localhost:8080/quiz-app/resources/question-answer');
-            const moduleCounts: { [key: string]: number } = {};
-            // Aus dem Response die Module und Frageanzahlen ermitteln
+            const response = await axios.get('api/quiz-app/resources/question-answer');
+            const moduleCounts: { [key: string]: number } = {}
             response.data.forEach((question: any) => {
                 const {module} = question;
                 if (!moduleCounts[module]) {
-                    moduleCounts[module] = 0;
+                    moduleCounts[module] = 0
                 }
                 moduleCounts[module]++;
-            });
+            })
             const formattedData: Page[] = Object.keys(moduleCounts).map(module => ({
                 name: module,
                 numberOfQuestions: moduleCounts[module],
             }));
-            setModules(formattedData);
+            setModules(formattedData)
         } catch (error) {
-            console.error('Error fetching data:', error);
+            console.error('Error fetching data:', error)
         }
     };
 

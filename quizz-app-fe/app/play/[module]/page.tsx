@@ -26,10 +26,10 @@ const QuizPage = () => {
     const fetchQuestions = async () => {
         try {
             const response = await axios.get(
-                `http://localhost:8080/quiz-app/resources/question-answer/modules/${module}`
+                `api/quiz-app/resources/question-answer/modules/${module}`
             );
             setQuestions(response.data);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error fetching questions:', error);
         }
     };
