@@ -23,7 +23,7 @@ const ModuleTable = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get('api/quiz-app/resources/question-answer');
+            const response = await axios.get('api/question-answer');
             const moduleCounts: { [key: string]: number } = {}
             response.data.forEach((question: any) => {
                 const {module} = question;

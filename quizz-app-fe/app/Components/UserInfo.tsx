@@ -11,20 +11,21 @@ const UserInfo = () => {
         userName: string
     }
 
-    const [userInfo, SetUserInfo] = useState<User>()
+    /*
+      /!*  const [userInfo, SetUserInfo] = useState<User>()
 
-    const fetchUserInfo = async () => {
-        try {
-            const response = await axios.get("http://localhost:8080/quiz-app/resources/user/info");
-            SetUserInfo(response.data)
-        } catch (error) {
-            console.error("User konnte nicht abgerufen werden", error)
-        }
-    };
+        const fetchUserInfo = async () => {
+            try {
+                const response = await axios.get("http://localhost:8080/quiz-app/resources/user/info");
+                SetUserInfo(response.data)
+            } catch (error) {
+                console.error("User konnte nicht abgerufen werden", error)
+            }
+        };
 
-    useEffect(() => {
-        fetchUserInfo()
-    }, [userInfo])
+        useEffect(() => {
+            fetchUserInfo()
+        }, [us*!/erInfo])*/
 
     return (
         <div>

@@ -1,10 +1,8 @@
 import React from 'react'
-import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 import Button from "@mui/material/Button";
 import ListItem from "@/app/Components/ListItem";
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import Link from "next/link";
-import UserInfo from "@/app/Components/UserInfo";
 
 
 const bestenliste = [

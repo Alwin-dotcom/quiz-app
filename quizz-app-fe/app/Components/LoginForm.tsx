@@ -19,28 +19,28 @@ const LoginForm = () => {
         resolver: zodResolver(loginSchema),
     });
 
-    const requestAuthToken = async (email: string, password: string) => {
-        try {
-            const authResponse = await axios.post("https://dev-ttr18ohq2rtiayws.us.auth0.com/oauth/token", {
-                grant_type: "password",
-                client_id: "W48J0fA9kHkUlGXWnOjMxggvQAWpXRfJ",
-                client_secret: "67SA11WLvf_cR21zIkVmc6cFwFtVZh78uQ2_9yX-e2cIy9oZUvxTgqiihL21wtmC",
-                username: email,
-                password: password,
-                scope: "openid profile email",
-            });
+    /*  const requestAuthToken = async (email: string, password: string) => {
+          try {
+              const authResponse = await axios.post("https://dev-ttr18ohq2rtiayws.us.auth0.com/oauth/token", {
+                  grant_type: "password",
+                  client_id: "W48J0fA9kHkUlGXWnOjMxggvQAWpXRfJ",
+                  client_secret: "67SA11WLvf_cR21zIkVmc6cFwFtVZh78uQ2_9yX-e2cIy9oZUvxTgqiihL21wtmC",
+                  username: email,
+                  password: password,
+                  scope: "openid profile email",
+              });
 
-            console.log("Auth0 Antwort:", authResponse);
+              console.log("Auth0 Antwort:", authResponse);
 
-            if (authResponse.status !== 200) {
-                throw new Error(`Auth0 Rückgabe Fehler: ${authResponse.status}`);
-            }
+              if (authResponse.status !== 200) {
+                  throw new Error(`Auth0 Rückgabe Fehler: ${authResponse.status}`);
+              }
 
-            return authResponse.data?.access_token;
-        } catch (error) {
-            throw new Error("Fehler beim Anfordern des Auth0 Tokens");
-        }
-    };
+              return authResponse.data?.access_token;
+          } catch (error) {
+              throw new Error("Fehler beim Anfordern des Auth0 Tokens");
+          }
+      };  */
 
     const validateToken = (token: string) => {
         const tokenPayload = JSON.parse(atob(token.split('.')[1]));
