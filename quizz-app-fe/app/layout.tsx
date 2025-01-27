@@ -4,6 +4,7 @@ import "./globals.css";
 import {Roboto} from "next/font/google";
 import {usePathname} from "next/navigation";
 import Sidebar from "./Components/Sidebar";
+import UserInfo from "@/app/Components/UserInfo";
 
 
 const roboto = Roboto({
@@ -26,7 +27,7 @@ export default function RootLayout({children,}: Readonly<{ children: React.React
                     <Sidebar/>
                 </div>
             )}
-
+            <UserInfo></UserInfo>
             <div className={`flex-1 ${showSidebar ? "ml-64" : ""} overflow-y-auto`}>
                 {children}
             </div>

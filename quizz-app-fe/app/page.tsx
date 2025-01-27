@@ -22,7 +22,6 @@ const page = () => {
     return (
         <div>
             <div>
-                <UserInfo></UserInfo>
                 <div className="flex  items-center justify-center mt-[250px] ">
                     <ListItem items={bestenliste} key={module.id}/>
                 </div>
