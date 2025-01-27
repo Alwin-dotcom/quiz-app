@@ -118,7 +118,6 @@ const ModuleTable = () => {
                     </Table>
                 </TableContainer>
             </Paper>
-
             <Menu
                 id="module-menu"
                 anchorEl={anchorEl}
