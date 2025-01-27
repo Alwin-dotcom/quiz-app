@@ -3,6 +3,7 @@ import Button from "@mui/material/Button";
 import ListItem from "@/app/Components/ListItem";
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import Link from "next/link";
+import UserInfo from "@/app/Components/UserInfo";
 
 
 const bestenliste = [
@@ -21,6 +22,7 @@ const page = () => {
     return (
         <div>
             <div>
+                <UserInfo></UserInfo>
                 <div className="flex  items-center justify-center mt-[250px] ">
                     <ListItem items={bestenliste} key={module.id}/>
                 </div>

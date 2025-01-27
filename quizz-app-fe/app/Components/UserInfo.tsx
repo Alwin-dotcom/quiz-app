@@ -1,6 +1,5 @@
 'use client'
 
-
 import React, {useEffect, useState} from 'react'
 import axios from "axios";
 
@@ -11,31 +10,27 @@ const UserInfo = () => {
         userName: string
     }
 
-    /*
-      /!*  const [userInfo, SetUserInfo] = useState<User>()
 
-        const fetchUserInfo = async () => {
-            try {
-                const response = await axios.get("http://localhost:8080/quiz-app/resources/user/info");
-                SetUserInfo(response.data)
-            } catch (error) {
-                console.error("User konnte nicht abgerufen werden", error)
-            }
-        };
+    const [userInfo, SetUserInfo] = useState<User>()
 
-        useEffect(() => {
-            fetchUserInfo()
-        }, [us*!/erInfo])*/
+    const fetchUserInfo = async () => {
+        try {
+            const response = await axios.get("http://localhost:8080/quiz-app/resources/user/info", {withCredentials: true});
+            console.log("Data", response.data)
+            SetUserInfo(response.data)
+        } catch (error) {
+            console.error("User konnte nicht abgerufen werden", error)
+        }
+    };
+
+    useEffect(() => {
+        fetchUserInfo()
+    }, [])
 
     return (
-        <div>
-
-            <div>
-                {userInfo?.userName}
-            </div>
-            <div>
-                {userInfo?.email}
-            </div>
+        <div className="fixed top-0 right-0 p-4 bg-white rounded shadow-md">
+            <div className="text-lg font-bold">Nutzername: {userInfo?.userName}</div>
+            <div className="text-lg">Email: {userInfo?.email}</div>
         </div>
     )
 }

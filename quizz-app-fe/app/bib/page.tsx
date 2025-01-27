@@ -26,7 +26,10 @@ const ModuleTable = () => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
     React.useEffect(() => {
-        axios.get('http://localhost:8080/quiz-app/resources/question-answer')
+        axios.get('http://localhost:8080/quiz-app/resources/question-answer',
+            {
+                withCredentials: true
+            })
             .then(response => {
                 const moduleCounts: { [key: string]: number } = {};
                 response.data.forEach((question: any) => {

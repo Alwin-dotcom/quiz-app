@@ -1,3 +1,4 @@
+// next.config.js
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
@@ -16,7 +17,7 @@ const nextConfig: NextConfig = {
                     },
                     {
                         key: 'Access-Control-Allow-Methods',
-                        value: 'GET, DELETE, PATCH, POST, PUT',
+                        value: 'GET, DELETE, PATCH, POST, PUT, OPTIONS',
                     },
                     {
                         key: 'Access-Control-Allow-Headers',
@@ -27,15 +28,7 @@ const nextConfig: NextConfig = {
             },
         ];
     },
-
-    async rewrites() {
-        return [
-            {
-                source: '/api/:path*',
-                destination: 'http://localhost:8080/quiz-app/resources/:path*',
-            },
-        ];
-    },
+  
 };
 
 module.exports = nextConfig;
