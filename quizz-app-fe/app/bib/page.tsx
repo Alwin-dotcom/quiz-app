@@ -14,6 +14,8 @@ import MenuItem from '@mui/material/MenuItem';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import {Button} from "@mui/material";
 import Link from "next/link";
+import EditIcon from '@mui/icons-material/Edit';
+
 
 interface Module {
     name: string;
@@ -85,7 +87,7 @@ const ModuleTable = () => {
                         <TableHead>
                             <TableRow>
                                 <TableCell>
-                                    Modul
+                                    Modul auswählen
                                     <IconButton
                                         aria-controls="module-menu"
                                         aria-haspopup="true"
@@ -96,6 +98,7 @@ const ModuleTable = () => {
                                     </IconButton>
                                 </TableCell>
                                 <TableCell sx={{textAlign: 'right', minWidth: 150}}>Anzahl Fragen</TableCell>
+                                <TableCell sx={{textAlign: 'right', minWidth: 150}}>Fragen bearbeiten</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -103,12 +106,19 @@ const ModuleTable = () => {
                                 <TableRow key={module.name}>
                                     <TableCell>{module.name}</TableCell>
                                     <TableCell sx={{textAlign: 'right'}}>{module.questions}</TableCell>
+                                    <TableCell sx={{textAlign: 'right'}}>
+                                        <Link href={`/bib/${module.name}`}>
+                                            <IconButton><EditIcon></EditIcon></IconButton>
+                                        </Link>
+
+                                    </TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
                     </Table>
                 </TableContainer>
             </Paper>
+
             <Menu
                 id="module-menu"
                 anchorEl={anchorEl}

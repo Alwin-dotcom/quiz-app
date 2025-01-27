@@ -67,7 +67,7 @@ const ModuleTable = () => {
                                 <TableCell sx={{width: '30%'}}>Modul</TableCell>
                                 <TableCell sx={{textAlign: 'right', minWidth: 150, width: '30%'}}>Anzahl
                                     Fragen</TableCell>
-                                <TableCell sx={{width: '40%', textAlign: 'right'}}>Aktionen</TableCell>
+                                <TableCell sx={{width: '40%', textAlign: 'right'}}>Spielen</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
