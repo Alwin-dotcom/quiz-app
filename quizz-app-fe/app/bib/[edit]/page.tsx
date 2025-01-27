@@ -9,6 +9,10 @@ import {
     Typography,
     Switch,
     FormControlLabel,
+    MenuItem,
+    Select,
+    FormControl,
+    InputLabel
 } from '@mui/material';
 
 interface Answer {
@@ -21,6 +25,7 @@ interface Question {
     question: string;
     answers: Answer[];
     correctAnswerIndex: number | null;
+    status: string | null;
 }
 
 const EditModulePage = () => {
@@ -42,6 +47,7 @@ const EditModulePage = () => {
                             isCorrect: answer.isCorrect,
                         })),
                         correctAnswerIndex: item.answers.findIndex((answer: any) => answer.isCorrect),
+                        status: item.status
                     }));
                     setModuleData(questions);
                 })
@@ -86,9 +92,24 @@ const EditModulePage = () => {
         );
     };
 
+    const updateStatus = async (questionId: number, newStatus: string) => {
+        try {
+            const response = await axios.post(`http://localhost:8080/quiz-app/resources/question-answer/${questionId}/${newStatus}`);
+            console.log(`Status updated successfully:`, response.data);
+
+            // Update status in local state
+            setModuleData(prevQuestions =>
+                prevQuestions.map((question) =>
+                    question.id === questionId ? {...question, status: newStatus} : question
+                )
+            );
+        } catch (error) {
+            console.error('Error updating status:', error);
+        }
+    };
+
     const submitQuiz = async (questionIndex: number) => {
         const currentQuestion = moduleData[questionIndex];
-
         const quizPayload = {
             module: moduleName,
             question: currentQuestion.question,
@@ -171,6 +192,21 @@ const EditModulePage = () => {
                             />
                         </Box>
                     ))}
+
+                    {/* Status-Feld */}
+                    <FormControl fullWidth sx={{mt: 2}}>
+                        <InputLabel>Status</InputLabel>
+                        <Select
+                            value={question.status || ''}
+                            label="Status"
+                            onChange={(e) => updateStatus(question.id, e.target.value)}
+                            variant="outlined">
+                            <MenuItem value="APPROVED">APPROVED</MenuItem>
+                            <MenuItem value="REJECTED">REJECTED</MenuItem>
+                            <MenuItem value="">None</MenuItem>
+                        </Select>
+                    </FormControl>
+
                     {/* Speichern-Button */}
                     <Box className="flex flex-row justify-center items-center w-full mb-3">
                         <Button
