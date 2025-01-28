@@ -6,7 +6,7 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 const Page = () => {
     return (
         <div>
-            <div className="flex justfy-center flex-col items-center h-screen  mt-[150px]">
+            <div className="flex justfy-center flex-col items-center mt-[150px]">
                 <div className="flex items-center justify-center">
                     <h1 className="text-2xl text-seaBlue text-center font-bold mb-4">Modul wählen:</h1>
                 </div>
