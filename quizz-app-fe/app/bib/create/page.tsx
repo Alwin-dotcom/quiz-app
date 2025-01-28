@@ -95,8 +95,9 @@ export default function AddQuizModule() {
         try {
             console.log("Sending payload:", JSON.stringify(quizPayload, null, 2));
             const response = await axios.post(
-                "api/proxy/quiz-app/resources/question-answer",
-                quizPayload
+                "http://localhost:8080/quiz-app/resources/question-answer",
+                quizPayload,
+                {withCredentials: true}
             );
             console.log("Quiz saved successfully:", response.data);
         } catch (error) {
@@ -169,8 +170,7 @@ export default function AddQuizModule() {
                                 control={
                                     <Switch
                                         checked={question.correctAnswerIndex === answerIndex}
-                                        onChange={() =>
-                                            setCorrectAnswer(questionIndex, answerIndex)
+                                        onChange={() => setCorrectAnswer(questionIndex, answerIndex)
                                         }
                                         color="secondary"
                                     />

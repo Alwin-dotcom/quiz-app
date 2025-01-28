@@ -31,7 +31,7 @@ interface Question {
 const EditModulePage = () => {
     const {edit} = useParams();
     const [moduleData, setModuleData] = useState<Question[]>([]);
-    const [moduleName, setModuleName] = useState(edit || '');
+    const [moduleName, setModuleName] = useState(edit);
 
     useEffect(() => {
         if (moduleName) {
@@ -84,7 +84,10 @@ const EditModulePage = () => {
                     ? {
                         ...question,
                         answers: question.answers.map((answer, aIndex) =>
-                            aIndex === answerIndex ? {...answer, answer: newText} : answer
+                            aIndex === answerIndex ? {
+                                ...answer,
+                                answer: newText
+                            } : answer
                         ),
                     }
                     : question
@@ -96,7 +99,6 @@ const EditModulePage = () => {
         try {
             const response = await axios.post(`http://localhost:8080/quiz-app/resources/question-answer/${questionId}/${newStatus}`);
             console.log(`Status updated successfully:`, response.data);
-
             // Update status in local state
             setModuleData(prevQuestions =>
                 prevQuestions.map((question) =>
@@ -118,11 +120,9 @@ const EditModulePage = () => {
                 isCorrect: answer.isCorrect,
             })),
         };
-
         try {
             console.log('Sending payload:', JSON.stringify(quizPayload, null, 2));
-            const response = await axios.put(
-                `http://localhost:8080/quiz-app/resources/question-answer/modules/${moduleName}`,
+            const response = await axios.put(`http://localhost:8080/quiz-app/resources/question-answer/${moduleName}`,
                 quizPayload
             );
             console.log('Quiz saved successfully:', response.data);
