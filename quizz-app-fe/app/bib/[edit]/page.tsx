@@ -31,7 +31,7 @@ interface Question {
 const EditModulePage = () => {
     const {edit} = useParams();
     const [moduleData, setModuleData] = useState<Question[]>([]);
-    const [moduleName, setModuleName] = useState(edit);
+    const moduleName = edit;
 
     useEffect(() => {
         if (moduleName) {
@@ -51,68 +51,18 @@ const EditModulePage = () => {
                     }));
                     setModuleData(questions);
                 })
-                .catch(error => console.error('Error fetching data:', error));
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        } else {
+            console.error('Module name is not defined');
         }
     }, [moduleName]);
 
-    const updateQuestionText = (questionIndex: number, newText: string) => {
-        const updatedQuestions = [...moduleData];
-        updatedQuestions[questionIndex].question = newText;
-        setModuleData(updatedQuestions);
-    };
-
-    const setCorrectAnswer = (questionIndex: number, answerIndex: number) => {
-        setModuleData(prevQuestions =>
-            prevQuestions.map((question, qIndex) =>
-                qIndex === questionIndex
-                    ? {
-                        ...question,
-                        answers: question.answers.map((answer, aIndex) =>
-                            aIndex === answerIndex ? {...answer, isCorrect: true} : {...answer, isCorrect: false}
-                        ),
-                        correctAnswerIndex: answerIndex,
-                    }
-                    : question
-            )
-        );
-    };
-
-    const updateAnswerText = (questionIndex: number, answerIndex: number, newText: string) => {
-        setModuleData((prevQuestions) =>
-            prevQuestions.map((question, qIndex) =>
-                qIndex === questionIndex
-                    ? {
-                        ...question,
-                        answers: question.answers.map((answer, aIndex) =>
-                            aIndex === answerIndex ? {
-                                ...answer,
-                                answer: newText
-                            } : answer
-                        ),
-                    }
-                    : question
-            )
-        );
-    };
-
-    const updateStatus = async (questionId: number, newStatus: string) => {
-        try {
-            const response = await axios.post(`http://localhost:8080/quiz-app/resources/question-answer/${questionId}/${newStatus}`);
-            console.log(`Status updated successfully:`, response.data);
-            // Update status in local state
-            setModuleData(prevQuestions =>
-                prevQuestions.map((question) =>
-                    question.id === questionId ? {...question, status: newStatus} : question
-                )
-            );
-        } catch (error) {
-            console.error('Error updating status:', error);
-        }
-    };
-
-    const submitQuiz = async (questionIndex: number) => {
+    const updateQuestionAnswer = async (questionIndex: number) => {
         const currentQuestion = moduleData[questionIndex];
         const quizPayload = {
+            id: currentQuestion.id,
             module: moduleName,
             question: currentQuestion.question,
             answers: currentQuestion.answers.map((answer) => ({
@@ -122,13 +72,98 @@ const EditModulePage = () => {
         };
         try {
             console.log('Sending payload:', JSON.stringify(quizPayload, null, 2));
-            const response = await axios.put(`http://localhost:8080/quiz-app/resources/question-answer/${moduleName}`,
-                quizPayload
+            const response = await axios.put(`http://localhost:8080/quiz-app/resources/question-answer/`,
+                quizPayload,
+                {
+                    withCredentials: true
+                }
             );
-            console.log('Quiz saved successfully:', response.data);
+            console.log('Quiz updated successfully:', response.data);
         } catch (error) {
             console.error('Error saving quiz:', error);
         }
+    };
+
+    const setStatus = async (questionIndex: number, newStatus: string) => {
+        const currentQuestion = moduleData[questionIndex];
+        const quizPayload = {
+            id: currentQuestion.id,
+            module: moduleName,
+            question: currentQuestion.question,
+            answers: currentQuestion.answers.map((answer) => ({
+                answer: answer.answer,
+                isCorrect: answer.isCorrect,
+            })),
+        };
+        try {
+            const response = await axios.post(`http://localhost:8080/quiz-app/resources/question-answer/${quizPayload.id}/${newStatus}`,
+                quizPayload,
+                {
+                    withCredentials: true
+                }
+            );
+            console.log(`Status updated successfully:`, response.data);
+            setModuleData(prevQuestions => {
+                return prevQuestions.map((question) => {
+                    if (question.id === quizPayload.id) {
+                        return {...question, status: newStatus};
+                    } else {
+                        return question;
+                    }
+                });
+            });
+        } catch (error) {
+            console.error('Error updating status:', error);
+        }
+    };
+
+    const updateQuestionText = (questionIndex: number, newText: string) => {
+        const updatedQuestions = [...moduleData];
+        updatedQuestions[questionIndex].question = newText;
+        setModuleData(updatedQuestions);
+    };
+
+    const setCorrectAnswer = (questionIndex: number, answerIndex: number) => {
+        setModuleData(prevQuestions => {
+            return prevQuestions.map((question, qIndex) => {
+                if (qIndex === questionIndex) {
+                    return {
+                        ...question,
+                        answers: question.answers.map((answer, aIndex) => {
+                            if (aIndex === answerIndex) {
+                                return {...answer, isCorrect: true};
+                            } else {
+                                return {...answer, isCorrect: false};
+                            }
+                        }),
+                        correctAnswerIndex: answerIndex,
+                    };
+                } else {
+                    return question;
+                }
+            });
+        });
+    };
+
+    const updateAnswerText = (questionIndex: number, answerIndex: number, newText: string) => {
+        setModuleData(prevQuestions => {
+            return prevQuestions.map((question, qIndex) => {
+                if (qIndex === questionIndex) {
+                    return {
+                        ...question,
+                        answers: question.answers.map((answer, aIndex) => {
+                            if (aIndex === answerIndex) {
+                                return {...answer, answer: newText};
+                            } else {
+                                return answer;
+                            }
+                        }),
+                    };
+                } else {
+                    return question;
+                }
+            });
+        });
     };
 
     return (
@@ -153,8 +188,6 @@ const EditModulePage = () => {
             >
                 Fragen bearbeiten
             </Typography>
-
-            {/* Fragen-Felder */}
             {moduleData.map((question, questionIndex) => (
                 <Box key={questionIndex} sx={{mb: 3, width: '100%'}}>
                     <TextField
@@ -163,8 +196,6 @@ const EditModulePage = () => {
                         onChange={(e) => updateQuestionText(questionIndex, e.target.value)}
                         sx={{mb: 2, width: '100%'}}
                     />
-
-                    {/* Antwortfelder */}
                     {question.answers.map((answer, answerIndex) => (
                         <Box
                             key={answerIndex}
@@ -173,9 +204,7 @@ const EditModulePage = () => {
                             <TextField
                                 label={`Antwort ${answerIndex + 1}`}
                                 value={answer.answer}
-                                onChange={(e) =>
-                                    updateAnswerText(questionIndex, answerIndex, e.target.value)
-                                }
+                                onChange={(e) => updateAnswerText(questionIndex, answerIndex, e.target.value)}
                                 sx={{flex: 1, mr: 2}}
                             />
                             <FormControlLabel
@@ -192,25 +221,21 @@ const EditModulePage = () => {
                             />
                         </Box>
                     ))}
-
-                    {/* Status-Feld */}
                     <FormControl fullWidth sx={{mt: 2}}>
                         <InputLabel>Status</InputLabel>
                         <Select
                             value={question.status || ''}
                             label="Status"
-                            onChange={(e) => updateStatus(question.id, e.target.value)}
+                            onChange={(e) => setStatus(questionIndex, e.target.value)}
                             variant="outlined">
                             <MenuItem value="APPROVED">APPROVED</MenuItem>
                             <MenuItem value="REJECTED">REJECTED</MenuItem>
                             <MenuItem value="">None</MenuItem>
                         </Select>
                     </FormControl>
-
-                    {/* Speichern-Button */}
                     <Box className="flex flex-row justify-center items-center w-full mb-3">
                         <Button
-                            onClick={() => submitQuiz(questionIndex)}
+                            onClick={() => updateQuestionAnswer(questionIndex)}
                             sx={{
                                 width: 200,
                                 height: 50,
