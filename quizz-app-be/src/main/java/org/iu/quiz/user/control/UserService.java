@@ -5,6 +5,7 @@ import org.iu.quiz.Control;
 import org.iu.quiz.user.entity.UserRank;
 
 import java.util.List;
+import java.util.Objects;
 
 @Control
 public class UserService {
@@ -32,5 +33,19 @@ public class UserService {
 
   public List<UserRank> getAllUserRanks() {
     return UserRank.findAll().list();
+  }
+
+  public int getTotalRank() {
+    try {
+      List<UserRank> allUserRanks = UserRank.findAll().list();
+      if (!allUserRanks.isEmpty()) {
+        return allUserRanks.stream().mapToInt(rank -> rank.rank).sum();
+      } else {
+        return 0;
+      }
+    } catch (Exception e) {
+      System.err.println("Error getting total rank: " + e);
+      return 0;
+    }
   }
 }
