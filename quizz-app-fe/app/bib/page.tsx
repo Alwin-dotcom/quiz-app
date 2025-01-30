@@ -97,6 +97,7 @@ const ModuleTable = () => {
                                         <FilterListIcon/>
                                     </IconButton>
                                 </TableCell>
+                                <TableCell sx={{textAlign: 'left', minWidth: 150}}>Fragen Status</TableCell>
                                 <TableCell sx={{textAlign: 'right', minWidth: 150}}>Anzahl Fragen</TableCell>
                                 <TableCell sx={{textAlign: 'right', minWidth: 150}}>Fragen bearbeiten</TableCell>
                             </TableRow>
@@ -104,7 +105,9 @@ const ModuleTable = () => {
                         <TableBody>
                             {filteredModules.map(module => (
                                 <TableRow key={module.name}>
+
                                     <TableCell>{module.name}</TableCell>
+                                    <TableCell sx={{textAlign: 'left'}}>{module.status}</TableCell>
                                     <TableCell sx={{textAlign: 'right'}}>{module.questions}</TableCell>
                                     <TableCell sx={{textAlign: 'right'}}>
                                         <Link href={`/bib/${module.name}`}>
