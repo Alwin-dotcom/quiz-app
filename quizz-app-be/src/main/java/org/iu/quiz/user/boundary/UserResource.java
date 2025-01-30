@@ -48,6 +48,12 @@ public class UserResource {
     return Response.ok().entity(userService.getAllUserRanks()).build();
   }
 
+  @Path("ranks/total")
+  @GET
+  public Response getTotalRank(){
+    return Response.ok().entity(userService.getTotalRank()).build();
+  }
+
   User buildUserInfo() {
     return User.builder()
         .email(jsonWebToken.getClaim("email"))
