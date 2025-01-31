@@ -1,3 +1,4 @@
+/*
 "use client";
 import React from "react";
 import {Controller, useForm} from "react-hook-form";
@@ -19,7 +20,7 @@ const LoginForm = () => {
         resolver: zodResolver(loginSchema),
     });
 
-    /*  const requestAuthToken = async (email: string, password: string) => {
+    /!*  const requestAuthToken = async (email: string, password: string) => {
           try {
               const authResponse = await axios.post("https://dev-ttr18ohq2rtiayws.us.auth0.com/oauth/token", {
                   grant_type: "password",
@@ -40,7 +41,7 @@ const LoginForm = () => {
           } catch (error) {
               throw new Error("Fehler beim Anfordern des Auth0 Tokens");
           }
-      };  */
+      };  *!/
 
     const validateToken = (token: string) => {
         const tokenPayload = JSON.parse(atob(token.split('.')[1]));
@@ -147,4 +148,4 @@ const LoginForm = () => {
     );
 };
 
-export default LoginForm;
+export default LoginForm;*/

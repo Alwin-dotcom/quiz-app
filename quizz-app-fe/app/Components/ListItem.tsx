@@ -47,7 +47,7 @@ export default function ListItem({items}: ListItemProps) {
                 {({index, style}: { index: number, style: React.CSSProperties }) => (
                     <div style={style}>
                         <ListItemButton key={items[index].id}>
-                            <ListItemText primary={`${index + 1}.     ${items[index].name}`}/>
+                            <ListItemText primary={`${index + 1}.${items[index].name}`}/>
                         </ListItemButton>
                     </div>
                 )}

@@ -1,29 +1,36 @@
-import React from 'react'
+'use client'
+import React, {useEffect, useState} from 'react'
 import Button from "@mui/material/Button";
 import ListItem from "@/app/Components/ListItem";
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import Link from "next/link";
-import UserInfo from "@/app/Components/UserInfo";
+import axios from "axios";
 
-
-const bestenliste = [
-    {id: 1, name: "Ali"},
-    {id: 2, name: "Alwin"},
-    {id: 3, name: "Anni"},
-    {id: 4, name: "Freddy"},
-    {id: 5, name: "Lena"},
-    {id: 6, name: "Max"},
-    {id: 7, name: "Emma"},
-    {id: 8, name: "Lukas"},
-
-];
 
 const page = () => {
+
+
+    const [ranks, setRanks] = useState([]);
+    const fetchRanks = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/quiz-app/resources/user/ranks');
+            const ranks = response.data;
+            setRanks(ranks)
+        } catch (error) {
+            console.error('Error fetching ranks:', error);
+        }
+    }
+
+    useEffect(() => {
+        fetchRanks()
+    }, [ranks]);
+
+
     return (
         <div>
             <div>
                 <div className="flex  items-center justify-center mt-[250px] ">
-                    <ListItem items={bestenliste} key={module.id}/>
+                    <ListItem items={ranks} key={module.id}/>
                 </div>
             </div>
             <div className="flex justify-center mt-10 mb-10 ">
@@ -38,14 +45,10 @@ const page = () => {
                             borderRadius: 5,
                             py: 3.5
                         }} variant="contained">
-
                         Ein Quiz starten
                     </Button>
                 </Link>
-
             </div>
-
-
         </div>
     )
 }

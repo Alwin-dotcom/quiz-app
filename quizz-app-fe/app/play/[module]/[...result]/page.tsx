@@ -1,8 +1,11 @@
 'use client';
 import {useParams} from "next/navigation";
 import {Params} from "react-router";
+import axios from "axios";
+import {useEffect} from "react";
 
 const ResultPage = () => {
+
     const params: Params = useParams();
     const resultArray = params.result || [];
     const [score, total] = resultArray;

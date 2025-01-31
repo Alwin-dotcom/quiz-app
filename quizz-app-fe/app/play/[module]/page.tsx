@@ -23,6 +23,22 @@ const QuizPage = () => {
     const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
     const [score, setScore] = useState<number>(0);
 
+
+    const postScore = async () => {
+        const payload = {
+            score: score
+        }
+        console.log("payload", payload)
+        try {
+            const response = await axios.post("http://localhost:8080/quiz-app/resources/user/rank",
+                payload,
+                {withCredentials: true}
+            )
+            console.log("response", response)
+        } catch (error) {
+            console.error('Error fetching ranks:', error);
+        }
+    }
     const fetchQuestions = async () => {
         try {
             const response = await axios.get(`http://localhost:8080/quiz-app/resources/question-answer/modules/${module}`,
@@ -40,7 +56,6 @@ const QuizPage = () => {
         }
     }, [module]);
 
-    // Aktuelle Frage basiert auf das Fragen Index im useState
     const currentQuestion = questions[currentQuestionIndex];
 
 
@@ -57,6 +72,8 @@ const QuizPage = () => {
             setSelectedAnswer(null);
         } else {
             router.push(`/play/${module}/${score}/${questions.length}`);
+            postScore()
+
         }
     };
 
