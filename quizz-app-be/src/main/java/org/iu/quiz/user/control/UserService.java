@@ -1,20 +1,24 @@
 package org.iu.quiz.user.control;
 
 import jakarta.ws.rs.NotFoundException;
-import org.iu.quiz.Control;
-import org.iu.quiz.user.entity.UserRank;
-
 import java.util.List;
 import java.util.Objects;
+
+import org.iu.quiz.Control;
+import org.iu.quiz.user.entity.UserRank;
 
 @Control
 public class UserService {
   public UserRank upsertRank(UserRank userRank) {
     try {
-      UserRank existingUserRank = UserRank.findById(userRank.id);
-      userRank.id = existingUserRank.id;
-      userRank.persistAndFlush();
-      return userRank;
+      if (Objects.nonNull(userRank.id)) {
+        UserRank existingUserRank = UserRank.findById(userRank.id);
+       existingUserRank.rank=userRank.rank;
+        existingUserRank.persistAndFlush();
+        return userRank;
+      } else {
+        throw new NotFoundException();
+      }
     } catch (NotFoundException e) {
       userRank.persistAndFlush();
       final List<UserRank> matchingUserRanks =
