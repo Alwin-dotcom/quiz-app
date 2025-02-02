@@ -3,6 +3,7 @@ import {useState, useEffect} from 'react';
 import {useParams, useRouter} from 'next/navigation';
 import axios from 'axios';
 import {Button} from "@mui/material";
+import {useUser} from "@/app/Context/UserContext";
 
 interface Answer {
     answer: string;
@@ -23,28 +24,16 @@ const QuizPage = () => {
     const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
     const [score, setScore] = useState<number>(0);
 
+    const {userInfo} = useUser();
 
-    const postScore = async () => {
-        const payload = {
-            score: score
-        }
-        console.log("payload", payload)
-        try {
-            const response = await axios.post("http://localhost:8080/quiz-app/resources/user/rank",
-                payload,
-                {withCredentials: true}
-            )
-            console.log("response", response)
-        } catch (error) {
-            console.error('Error fetching ranks:', error);
-        }
-    }
     const fetchQuestions = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/quiz-app/resources/question-answer/modules/${module}`,
-                {withCredentials: true});
+            const response = await axios.get(
+                `http://localhost:8080/quiz-app/resources/question-answer/modules/${module}`,
+                {withCredentials: true}
+            );
             setQuestions(response.data);
-            console.log("response:", response.data)
+            console.log("Response:", response.data);
         } catch (error) {
             console.error('Error fetching questions:', error);
         }
@@ -56,8 +45,8 @@ const QuizPage = () => {
         }
     }, [module]);
 
-    const currentQuestion = questions[currentQuestionIndex];
 
+    const currentQuestion = questions[currentQuestionIndex];
 
     const handleAnswerSelect = (index: number) => {
         setSelectedAnswer(index);
@@ -71,12 +60,51 @@ const QuizPage = () => {
             setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
             setSelectedAnswer(null);
         } else {
+            postScore();
             router.push(`/play/${module}/${score}/${questions.length}`);
-            postScore()
-
         }
     };
 
+    const postScore = async () => {
+        try {
+            const ranksResponse = await axios.get(
+                "http://localhost:8080/quiz-app/resources/user/ranks",
+                {withCredentials: true}
+            );
+
+            const ranksResponseData = ranksResponse.data;
+            const userRank = ranksResponseData.find((responseObject: any) => {
+                return responseObject?.email === userInfo?.email && responseObject?.userName === userInfo?.userName;
+            });
+
+            let payload;
+
+            if (userRank) {
+                const newRank = userRank.rank + score;
+                payload = {
+                    id: userRank.id,
+                    userName: userInfo?.userName,
+                    email: userInfo?.email,
+                    rank: newRank,
+                };
+            } else {
+                payload = {
+                    userName: userInfo?.userName,
+                    email: userInfo?.email,
+                    rank: score,
+                };
+            }
+
+            const response = await axios.post(
+                "http://localhost:8080/quiz-app/resources/user/rank",
+                payload,
+                {withCredentials: true}
+            );
+            console.log("Score wurde gepostet. Response:", response);
+        } catch (error) {
+            console.error("Error posting score:", error);
+        }
+    };
     if (questions.length === 0) {
         return (
             <div className="flex justify-center items-center h-screen">
@@ -87,12 +115,14 @@ const QuizPage = () => {
 
     return (
         <div className="flex flex-col items-center justify-center h-screen p-4">
-            <div className="bg-white-100 shadow-lg  rounded-lg w-full max-w-7xl p-6">
+            <div className="bg-white-100 shadow-lg rounded-lg w-full max-w-7xl p-6">
                 <div className="bg-[#D9D9D9] rounded-lg p-4">
-                    <h1 className="text-2xl bg- text-center font-bold text-seaBlue mb-4">
+                    <h1 className="text-2xl text-center font-bold text-seaBlue mb-4">
                         Frage ({currentQuestionIndex + 1} / {questions.length})
                     </h1>
-                    <p className="text-lg text-center text-seaBlue mb-6">{currentQuestion.question}</p>
+                    <p className="text-lg text-center text-seaBlue mb-6">
+                        {currentQuestion.question}
+                    </p>
                 </div>
                 <div className="grid grid-cols-2 gap-4 mt-10">
                     {currentQuestion.answers.map((answer, index) => (

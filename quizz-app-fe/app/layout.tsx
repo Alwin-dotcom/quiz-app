@@ -5,6 +5,7 @@ import {Roboto} from "next/font/google";
 import {usePathname} from "next/navigation";
 import Sidebar from "./Components/Sidebar";
 import UserInfo from "@/app/Components/UserInfo";
+import {UserProvider} from "./Context/UserContext";
 
 
 const roboto = Roboto({
@@ -19,20 +20,23 @@ export default function RootLayout({children,}: Readonly<{ children: React.React
     const showSidebar = pathname !== "/login";
 
     return (
-        <html lang="en">
-        <body className={`${roboto.className} antialiased`}>
-        <div className="flex h-screen">
-            {showSidebar && (
-                <div className="fixed top-0 left-0 w-64 bg-seaBlue text-white h-screen overflow-y-hidden">
-                    <Sidebar/>
+        <UserProvider>
+            <html lang="en">
+            <body className={`${roboto.className} antialiased`}>
+            <div className="flex h-screen">
+                {showSidebar && (
+                    <div className="fixed top-0 left-0 w-64 bg-seaBlue text-white h-screen overflow-y-hidden">
+                        <Sidebar/>
+                    </div>
+                )}
+                <UserInfo></UserInfo>
+                <div className={`flex-1 ${showSidebar ? "ml-64" : ""} overflow-y-auto`}>
+                    {children}
                 </div>
-            )}
-            <UserInfo></UserInfo>
-            <div className={`flex-1 ${showSidebar ? "ml-64" : ""} overflow-y-auto`}>
-                {children}
             </div>
-        </div>
-        </body>
-        </html>
+            </body>
+            </html>
+        </UserProvider>
+
     );
 }

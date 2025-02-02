@@ -8,8 +8,6 @@ import axios from "axios";
 
 
 const page = () => {
-
-
     const [ranks, setRanks] = useState([]);
     const fetchRanks = async () => {
         try {
@@ -20,7 +18,6 @@ const page = () => {
             console.error('Error fetching ranks:', error);
         }
     }
-
     useEffect(() => {
         fetchRanks()
     }, [ranks]);
