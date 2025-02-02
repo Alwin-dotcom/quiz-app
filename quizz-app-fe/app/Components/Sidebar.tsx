@@ -4,7 +4,8 @@ import {Button} from "@mui/material";
 import Link from "next/link";
 
 const Sidebar = () => (
-    <div className="flex flex-col w-64 bg-seaBlue text-white h-screen fixed top-0 left-0 overflow-y-auto  ">
+    <div
+        className="flex flex-col w-64 bg-seaBlue text-white h-screen fixed top-0 left-0  overflow-y-auto  ">
         {/* Logo */}
         <Link href="/" legacyBehavior>
             <div className="flex justify-center mt-5 ">

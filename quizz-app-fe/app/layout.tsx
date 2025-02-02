@@ -30,7 +30,7 @@ export default function RootLayout({children,}: Readonly<{ children: React.React
                     </div>
                 )}
                 <UserInfo></UserInfo>
-                <div className={`flex-1 ${showSidebar ? "ml-64" : ""} overflow-y-auto`}>
+                <div className={`flex-1 ${showSidebar ? "ml-64" : ""} overflow-y-auto `}>
                     {children}
                 </div>
             </div>
