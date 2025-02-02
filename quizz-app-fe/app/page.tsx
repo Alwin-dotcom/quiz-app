@@ -50,7 +50,8 @@ const Page = () => {
             <div className="flex justify-center flex-col items-center h-screen ">
 
 
-                <div className="flex flex-col items-center justify-center bg-gray-200 ">
+                <div
+                    className="flex flex-col items-center justify-center bg-gray-200 border-2 border-seaBlue rounded p-4 mb-5 ">
                     <h1 className="text-2xl text-seaBlue text-center font-bold mb-4">Gesamtpunktzahl aller User</h1>
                     <div className="text-seaBlue">{totalRank}</div>
                 </div>
