@@ -48,7 +48,7 @@ const ModuleTable = () => {
     }, []);
 
     return (
-        <div className="flex flex-col items-center justify-center h-screen p-4">
+        <div className="flex flex-col items-center justify-center  p-4 mt-[147px]">
             <h1 className="text-2xl text-seaBlue font-bold mb-4 text-center">
                 Quiz auswählen
             </h1>

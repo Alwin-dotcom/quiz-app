@@ -13,6 +13,7 @@
     "@emotion/styled": "^11.14.0",
     "@heroui/button": "^2.2.10",
     "@heroui/card": "^2.2.10",
+    "@heroui/radio": "^2.3.9",
     "@heroui/react": "^2.6.14",
     "@heroui/table": "^2.2.9",
     "@heroui/use-infinite-scroll": "^2.2.3",
