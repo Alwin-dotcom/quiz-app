@@ -70,8 +70,8 @@ const ModuleTable = () => {
                                 <TableCell>
                                     <Link href={`/play/${module.name}`} passHref legacyBehavior>
                                         <Button>
-                                            <PlayArrowIcon className="mr-1"/>
-                                            Spielen
+                                            <PlayArrowIcon/>
+
                                         </Button>
                                     </Link>
                                 </TableCell>
