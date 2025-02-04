@@ -12,9 +12,9 @@ import {
     TableRow,
     TableCell,
 } from '@heroui/table';
+import {Pagination, getKeyValue,} from "@heroui/react";
 import TotalScoreCard from "@/app/Components/TotalScoreCard";
-import {useInfiniteScroll} from "@heroui/use-infinite-scroll";
-import {useAsyncList} from "@react-stately/data";
+
 
 interface UserRank {
     userName: string;
@@ -24,6 +24,19 @@ interface UserRank {
 const Page = () => {
     const [ranks, setRanks] = useState<UserRank[]>([]);
     const [totalRank, setTotalRank] = useState<number>(0);
+
+
+    const [page, setPage] = React.useState(1);
+    const rowsPerPage = 4;
+
+    const pages = Math.ceil(ranks.length / rowsPerPage);
+
+    const items = React.useMemo(() => {
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        return ranks.slice(start, end);
+    }, [page, ranks]);
 
     const fetchTotalRank = async () => {
         try {
@@ -56,19 +69,28 @@ const Page = () => {
 
     return (
         <div className="flex flex-col justify-center items-center h-screen">
-
             <TotalScoreCard totalScore={totalRank}/>
-
             <h1 className="text-2xl text-seaBlue text-center font-bold mb-4">Rangliste</h1>
-
             <div className="flex flex-col justify-center items-center w-[70%]">
-                <Table>
+                <Table bottomContent={
+                    <div className="flex w-full justify-center">
+                        <Pagination
+                            isCompact
+                            showControls
+                            showShadow
+                            color="secondary"
+                            page={page}
+                            total={pages}
+                            onChange={(page) => setPage(page)}
+                        />
+                    </div>
+                }>
                     <TableHeader>
                         <TableColumn>NAME</TableColumn>
                         <TableColumn>Punkte</TableColumn>
                     </TableHeader>
-                    <TableBody>
-                        {ranks.map((rank, index) => (
+                    <TableBody items={items}>
+                        {items.map((rank, index) => (
                             <TableRow key={index}>
                                 <TableCell>{rank.userName}</TableCell>
                                 <TableCell>{rank.rank}</TableCell>

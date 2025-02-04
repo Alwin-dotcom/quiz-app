@@ -13,6 +13,7 @@ import {
 } from '@heroui/table';
 import {EditIcon} from "@heroui/shared-icons";
 import MuiButton from "@/app/Components/MUIButton";
+import {Pagination} from "@heroui/react";
 
 interface Module {
     name: string;
@@ -21,6 +22,18 @@ interface Module {
 
 const ModuleTable = () => {
     const [modules, setModules] = React.useState<Module[]>([]);
+
+    const [page, setPage] = React.useState(1);
+    const rowsPerPage = 6;
+
+    const pages = Math.ceil(modules.length / rowsPerPage);
+
+    const items = React.useMemo(() => {
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+
+        return modules.slice(start, end);
+    }, [page, modules]);
 
     React.useEffect(() => {
         axios.get('http://localhost:8080/quiz-app/resources/question-answer',
@@ -54,14 +67,26 @@ const ModuleTable = () => {
             </h1>
 
             <div className="flex flex-col justify-center items-center min-w-[70%]">
-                <Table align={"center"}>
+                <Table bottomContent={
+                    <div className="flex w-full justify-center">
+                        <Pagination
+                            isCompact
+                            showControls
+                            showShadow
+                            color="secondary"
+                            page={page}
+                            total={pages}
+                            onChange={(page) => setPage(page)}
+                        />
+                    </div>
+                } align={"center"}>
                     <TableHeader>
                         <TableColumn>Modul</TableColumn>
                         <TableColumn>Anzahl Fragen</TableColumn>
                         <TableColumn>Fragen bearbeiten</TableColumn>
                     </TableHeader>
-                    <TableBody>
-                        {modules.map((module, index) => (
+                    <TableBody items={items}>
+                        {items.map((module, index) => (
                             <TableRow key={index}>
                                 <TableCell>{module.name}</TableCell>
                                 <TableCell>{module.questions}</TableCell>
