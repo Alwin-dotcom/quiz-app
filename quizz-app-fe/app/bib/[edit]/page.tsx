@@ -1,19 +1,10 @@
 'use client';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {useParams} from 'next/navigation';
 import axios from 'axios';
-import {
-    Box,
-    Button,
-    TextField,
-    Typography,
-    Switch,
-    FormControlLabel,
-    MenuItem,
-    Select,
-    FormControl,
-    InputLabel
-} from '@mui/material';
+import {useForm, useFieldArray, Controller} from 'react-hook-form';
+import {Input, RadioGroup, Radio} from '@heroui/react';
+import {Button, FormControl, InputLabel, MenuItem, Select} from '@mui/material';
 
 interface Answer {
     answer: string;
@@ -21,221 +12,165 @@ interface Answer {
 }
 
 interface Question {
-    id: number;
+    id?: number;
     question: string;
     answers: Answer[];
     correctAnswerIndex: number | null;
     status: string | null;
 }
 
+interface FormValues {
+    quizQuestions: Question[];
+}
+
 const EditModulePage = () => {
     const {edit} = useParams();
-    const [moduleData, setModuleData] = useState<Question[]>([]);
     const moduleName = edit;
+
+    const {register, control, handleSubmit, reset, getValues} = useForm<FormValues>({
+        defaultValues: {quizQuestions: []},
+    });
+
+    const {fields} = useFieldArray({
+        control,
+        name: 'quizQuestions',
+    });
 
     useEffect(() => {
         if (moduleName) {
-            axios.get(`http://localhost:8080/quiz-app/resources/question-answer/modules/${moduleName}`, {
-                withCredentials: true
-            })
-                .then(response => {
+            axios
+                .get(
+                    `http://localhost:8080/quiz-app/resources/question-answer/modules/${moduleName}`,
+                    {withCredentials: true}
+                )
+                .then((response) => {
                     const questions: Question[] = response.data.map((item: any) => ({
                         id: item.id,
                         question: item.question,
-                        answers: item.answers.map((answer: any) => ({
-                            answer: answer.answer,
-                            isCorrect: answer.isCorrect,
+                        answers: item.answers.map((ans: any) => ({
+                            answer: ans.answer,
+                            isCorrect: ans.isCorrect,
                         })),
-                        correctAnswerIndex: item.answers.findIndex((answer: any) => answer.isCorrect),
-                        status: item.status
+                        correctAnswerIndex: item.answers.findIndex((ans: any) => ans.isCorrect),
+                        status: item.status,
                     }));
-                    setModuleData(questions);
+                    reset({quizQuestions: questions});
                 })
-                .catch(error => {
-                    console.error('Error fetching data:', error);
-                });
+                .catch((error) => console.error('Error fetching data:', error));
         } else {
             console.error('Module name is not defined');
         }
-    }, [moduleName]);
+    }, [moduleName, reset]);
 
     const updateQuestionAnswer = async (questionIndex: number) => {
-        const currentQuestion = moduleData[questionIndex];
-        const quizPayload = {
-            id: currentQuestion.id,
+        const currentValues = getValues(`quizQuestions.${questionIndex}`);
+        const payload = {
+            id: currentValues.id,
             module: moduleName,
-            question: currentQuestion.question,
-            answers: currentQuestion.answers.map((answer) => ({
-                answer: answer.answer,
-                isCorrect: answer.isCorrect,
+            question: currentValues.question,
+            answers: currentValues.answers.map((ans: Answer, index: number) => ({
+                answer: ans.answer,
+                isCorrect: currentValues.correctAnswerIndex === index,
             })),
         };
         try {
-            console.log('Sending payload:', JSON.stringify(quizPayload, null, 2));
-            const response = await axios.put(`http://localhost:8080/quiz-app/resources/question-answer/`,
-                quizPayload,
-                {
-                    withCredentials: true
-                }
+            console.log('Sending payload:', payload);
+            await axios.put(
+                'http://localhost:8080/quiz-app/resources/question-answer/',
+                payload,
+                {withCredentials: true}
             );
-            console.log('Quiz updated successfully:', response.data);
+            console.log('Quiz updated successfully');
         } catch (error) {
-            console.error('Error saving quiz:', error);
+            console.error('Error updating quiz:', error);
         }
     };
 
-    const setStatus = async (questionIndex: number, newStatus: string) => {
-        const currentQuestion = moduleData[questionIndex];
-        const quizPayload = {
-            id: currentQuestion.id,
-            module: moduleName,
-            question: currentQuestion.question,
-            answers: currentQuestion.answers.map((answer) => ({
-                answer: answer.answer,
-                isCorrect: answer.isCorrect,
-            })),
-        };
-        try {
-            const response = await axios.post(`http://localhost:8080/quiz-app/resources/question-answer/${quizPayload.id}/${newStatus}`,
-                quizPayload,
-                {
-                    withCredentials: true
-                }
-            );
-            console.log(`Status updated successfully:`, response.data);
-            setModuleData(prevQuestions => {
-                return prevQuestions.map((question) => {
-                    if (question.id === quizPayload.id) {
-                        return {...question, status: newStatus};
-                    } else {
-                        return question;
-                    }
-                });
-            });
-        } catch (error) {
-            console.error('Error updating status:', error);
+    const onSubmit = async (data: FormValues) => {
+        for (const [index, question] of data.quizQuestions.entries()) {
+            const payload = {
+                id: question.id,
+                module: moduleName,
+                question: question.question,
+                answers: question.answers.map((ans, idx) => ({
+                    answer: ans.answer,
+                    isCorrect: question.correctAnswerIndex === idx,
+                })),
+            };
+            try {
+                console.log('Sending payload for question', index, payload);
+                await axios.put(
+                    'http://localhost:8080/quiz-app/resources/question-answer/',
+                    payload,
+                    {withCredentials: true}
+                );
+            } catch (error) {
+                console.error('Error updating quiz:', error);
+            }
         }
-    };
-
-    const updateQuestionText = (questionIndex: number, newText: string) => {
-        const updatedQuestions = [...moduleData];
-        updatedQuestions[questionIndex].question = newText;
-        setModuleData(updatedQuestions);
-    };
-
-    const setCorrectAnswer = (questionIndex: number, answerIndex: number) => {
-        setModuleData(prevQuestions => {
-            return prevQuestions.map((question, qIndex) => {
-                if (qIndex === questionIndex) {
-                    return {
-                        ...question,
-                        answers: question.answers.map((answer, aIndex) => {
-                            if (aIndex === answerIndex) {
-                                return {...answer, isCorrect: true};
-                            } else {
-                                return {...answer, isCorrect: false};
-                            }
-                        }),
-                        correctAnswerIndex: answerIndex,
-                    };
-                } else {
-                    return question;
-                }
-            });
-        });
-    };
-
-    const updateAnswerText = (questionIndex: number, answerIndex: number, newText: string) => {
-        setModuleData(prevQuestions => {
-            return prevQuestions.map((question, qIndex) => {
-                if (qIndex === questionIndex) {
-                    return {
-                        ...question,
-                        answers: question.answers.map((answer, aIndex) => {
-                            if (aIndex === answerIndex) {
-                                return {...answer, answer: newText};
-                            } else {
-                                return answer;
-                            }
-                        }),
-                    };
-                } else {
-                    return question;
-                }
-            });
-        });
     };
 
     return (
-        <Box
-            className="shadow-md"
-            sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                mt: 5,
-                p: 3,
-                borderRadius: 3,
-                width: '60%',
-                mx: 'auto',
-                backgroundColor: '#f9f9f9',
-            }}
+        <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="shadow-md flex flex-col items-center mt-20 p-3 rounded-md w-3/5 mx-auto bg-[#f9f9f9]"
         >
-            <Typography
-                className="text-seaBlue"
-                variant="h4"
-                sx={{mb: 3}}
-            >
+            <h4 className="text-2xl text-seaBlue font-bold mb-3 text-center">
                 Fragen bearbeiten
-            </Typography>
-            {moduleData.map((question, questionIndex) => (
-                <Box key={questionIndex} sx={{mb: 3, width: '100%'}}>
-                    <TextField
-                        label={`Frage ${questionIndex + 1}`}
-                        value={question.question}
-                        onChange={(e) => updateQuestionText(questionIndex, e.target.value)}
-                        sx={{mb: 2, width: '100%'}}
+            </h4>
+            {fields.map((field, qIndex) => (
+                <div key={field.id} className="mb-3 w-full">
+                    <Input
+                        label={`Frage ${qIndex + 1}`}
+                        {...register(`quizQuestions.${qIndex}.question` as const)}
+                        className="mb-2 w-full"
                     />
-                    {question.answers.map((answer, answerIndex) => (
-                        <Box
-                            key={answerIndex}
-                            sx={{display: 'flex', alignItems: 'center', mb: 1}}
-                        >
-                            <TextField
-                                label={`Antwort ${answerIndex + 1}`}
-                                value={answer.answer}
-                                onChange={(e) => updateAnswerText(questionIndex, answerIndex, e.target.value)}
-                                sx={{flex: 1, mr: 2}}
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Switch
-                                        checked={question.correctAnswerIndex === answerIndex}
-                                        onChange={() =>
-                                            setCorrectAnswer(questionIndex, answerIndex)
-                                        }
-                                        color="secondary"
-                                    />
-                                }
-                                label="Correct Answer"
-                            />
-                        </Box>
-                    ))}
+                    <Controller
+                        control={control}
+                        name={`quizQuestions.${qIndex}.correctAnswerIndex`}
+                        defaultValue={0}
+                        render={({field: radioField}) => (
+                            <RadioGroup
+                                value={radioField.value}
+                                onValueChange={radioField.onChange}
+                            >
+                                {field.answers.map((_, aIndex) => (
+                                    <div key={aIndex} className="flex items-center mb-1">
+                                        <Input
+                                            label={`Antwort ${aIndex + 1}`}
+                                            {...register(
+                                                `quizQuestions.${qIndex}.answers.${aIndex}.answer` as const
+                                            )}
+                                            className="flex-1 mr-2"
+                                        />
+                                        <Radio
+                                            value={aIndex}
+                                            label={`Antwort ${aIndex + 1}`}
+                                        />
+                                    </div>
+                                ))}
+                            </RadioGroup>
+                        )}
+                    />
                     <FormControl fullWidth sx={{mt: 2}}>
                         <InputLabel>Status</InputLabel>
-                        <Select
-                            value={question.status || ''}
-                            label="Status"
-                            onChange={(e) => setStatus(questionIndex, e.target.value)}
-                            variant="outlined">
-                            <MenuItem value="APPROVED">APPROVED</MenuItem>
-                            <MenuItem value="REJECTED">REJECTED</MenuItem>
-                            <MenuItem value="">None</MenuItem>
-                        </Select>
+                        <Controller
+                            control={control}
+                            name={`quizQuestions.${qIndex}.status`}
+                            defaultValue=""
+                            render={({field}) => (
+                                <Select {...field} label="Status" variant="outlined">
+                                    <MenuItem value="APPROVED">APPROVED</MenuItem>
+                                    <MenuItem value="REJECTED">REJECTED</MenuItem>
+                                    <MenuItem value="">None</MenuItem>
+                                </Select>
+                            )}
+                        />
                     </FormControl>
-                    <Box className="flex flex-row justify-center items-center w-full mb-3">
+                    <div className="flex flex-row justify-center items-center w-full mb-3">
                         <Button
-                            onClick={() => updateQuestionAnswer(questionIndex)}
+                            type="button"
+                            onClick={() => updateQuestionAnswer(qIndex)}
                             sx={{
                                 width: 200,
                                 height: 50,
@@ -248,10 +183,26 @@ const EditModulePage = () => {
                         >
                             Frage speichern
                         </Button>
-                    </Box>
-                </Box>
+                    </div>
+                </div>
             ))}
-        </Box>
+            <div className="flex flex-row justify-center items-center w-full mb-3">
+                <Button
+                    type="submit"
+                    sx={{
+                        width: 200,
+                        height: 50,
+                        backgroundColor: '#060440',
+                        borderRadius: 5,
+                        py: 3.5,
+                        mt: 5,
+                    }}
+                    variant="contained"
+                >
+                    Alle Fragen speichern
+                </Button>
+            </div>
+        </form>
     );
 };
 

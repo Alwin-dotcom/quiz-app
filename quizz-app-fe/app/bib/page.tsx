@@ -22,10 +22,8 @@ interface Module {
 
 const ModuleTable = () => {
     const [modules, setModules] = React.useState<Module[]>([]);
-
     const [page, setPage] = React.useState(1);
     const rowsPerPage = 6;
-
     const pages = Math.ceil(modules.length / rowsPerPage);
 
     const items = React.useMemo(() => {
@@ -66,20 +64,22 @@ const ModuleTable = () => {
                 Quiz auswählen
             </h1>
 
-            <div className="flex flex-col justify-center items-center min-w-[70%]">
-                <Table bottomContent={
-                    <div className="flex w-full justify-center">
-                        <Pagination
-                            isCompact
-                            showControls
-                            showShadow
-                            color="secondary"
-                            page={page}
-                            total={pages}
-                            onChange={(page) => setPage(page)}
-                        />
-                    </div>
-                } align={"center"}>
+            <div className="flex flex-col justify-center items-center   min-w-[70%]">
+                <Table
+                    align={"center"}
+                    bottomContent={
+                        <div className="flex w-full justify-center">
+                            <Pagination
+                                isCompact
+                                showControls
+                                showShadow
+                                color="secondary"
+                                page={page}
+                                total={pages}
+                                onChange={(page) => setPage(page)}
+                            />
+                        </div>
+                    }>
                     <TableHeader>
                         <TableColumn>Modul</TableColumn>
                         <TableColumn>Anzahl Fragen</TableColumn>
