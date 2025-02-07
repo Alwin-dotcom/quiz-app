@@ -5,10 +5,13 @@ import java.util.List;
 import java.util.Objects;
 
 import org.iu.quiz.Control;
+import org.iu.quiz.user.entity.User;
 import org.iu.quiz.user.entity.UserRank;
 
 @Control
 public class UserService {
+
+
   public UserRank upsertRank(UserRank userRank) {
     try {
       if (Objects.nonNull(userRank.id)) {

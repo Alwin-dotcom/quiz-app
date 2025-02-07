@@ -8,7 +8,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "user_rank")
-@SequenceGenerator(schema = "iu", name = "user_rank_seq")
+@SequenceGenerator(schema = "quizapp", name = "user_rank_seq")
 public class UserRank extends PanacheEntity {
   @Column(name = "email")
   public String email;
