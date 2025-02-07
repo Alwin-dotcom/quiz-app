@@ -1,19 +1,21 @@
 package org.iu.quiz.user.boundary;
 
-import io.quarkus.oidc.IdToken;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
-import org.eclipse.microprofile.jwt.JsonWebToken;
+import jakarta.ws.rs.core.SecurityContext;
 import org.iu.quiz.Boundary;
+import org.iu.quiz.exceptions.ValidationException;
 import org.iu.quiz.user.control.UserService;
 import org.iu.quiz.user.entity.User;
 import org.iu.quiz.user.entity.UserRank;
 
+import java.util.List;
 import java.util.Objects;
 
 @Boundary
@@ -21,13 +23,23 @@ import java.util.Objects;
 @Path("/user")
 public class UserResource {
 
-  @Inject @IdToken JsonWebToken jsonWebToken;
   @Inject UserService userService;
 
   @Path("/info")
   @GET
-  public Response getUserInfo() {
-    return Response.ok().entity(buildUserInfo()).build();
+  public Response getUserInfo(@Context SecurityContext securityContext) {
+
+    return Response.ok()
+        .entity(buildUserInfo(securityContext.getUserPrincipal().getName()))
+        .build();
+  }
+
+  private User buildUserInfo(String userName) {
+    List<User> users = User.find("where userName = ?1", userName).list();
+    if (users.size() != 1) {
+      throw new ValidationException("Not only one user found:" + users.size());
+    }
+    return users.get(0);
   }
 
   @Path("/rank")
@@ -50,14 +62,7 @@ public class UserResource {
 
   @Path("ranks/total")
   @GET
-  public Response getTotalRank(){
+  public Response getTotalRank() {
     return Response.ok().entity(userService.getTotalRank()).build();
-  }
-
-  User buildUserInfo() {
-    return User.builder()
-        .email(jsonWebToken.getClaim("email"))
-        .userName(jsonWebToken.getClaim("nickname"))
-        .build();
   }
 }

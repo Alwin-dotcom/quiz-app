@@ -1,6 +1,5 @@
 package org.iu.quiz.question.boundary;
 
-import io.quarkus.oidc.IdToken;
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -9,7 +8,6 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.SecurityContext;
 import java.util.Objects;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.iu.quiz.Boundary;
 import org.iu.quiz.exceptions.ValidationException;
 import org.iu.quiz.question.control.QuestionService;
@@ -20,8 +18,6 @@ import org.iu.quiz.question.entity.QuestionAnswer;
 @Authenticated
 public class QuestionAnswerResource {
   @Inject QuestionService questionService;
-
-  @Inject @IdToken JsonWebToken jwt;
 
   @GET
   @Path("/")
@@ -44,7 +40,8 @@ public class QuestionAnswerResource {
   @POST
   @Path("/")
   @Transactional
-  public Response createQuestionAnswer(QuestionAnswer questionAnswer) {
+  public Response createQuestionAnswer(
+      QuestionAnswer questionAnswer, @Context SecurityContext context) {
     if (questionAnswer.answers.size() != 4) {
       return Response.status(460)
           .entity(
@@ -52,7 +49,8 @@ public class QuestionAnswerResource {
                   "Expected answer size is 4 but was: " + questionAnswer.answers.size()))
           .build();
     }
-    final var response = questionService.createQuestion(questionAnswer, jwt.getClaim("nickname"));
+    final var response =
+        questionService.createQuestion(questionAnswer, context.getUserPrincipal().getName());
     if (Objects.nonNull(response)) {
       return Response.ok().entity(response).build();
     } else {
