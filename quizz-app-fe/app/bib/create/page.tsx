@@ -2,7 +2,7 @@
 import React from "react";
 import {useForm, useFieldArray, Controller} from "react-hook-form";
 import {Input, RadioGroup, Radio} from "@heroui/react";
-import {Button} from "@mui/material";
+import {Button, Snackbar} from "@mui/material";
 import axios from "axios";
 
 interface Answer {
@@ -41,6 +41,18 @@ export default function AddQuizModule() {
         name: "quizQuestions",
     });
 
+
+    const [snackbarState, setSnackbarState] = React.useState<State>({
+        open: false,
+        vertical: 'top',
+        horizontal: 'center',
+    });
+    const {vertical, horizontal, open} = snackbarState;
+
+    const handleClose = () => {
+        setSnackbarState((prev) => ({...prev, open: false}));
+    };
+
     const onSubmit = async (data: FormValues) => {
         for (const question of data.quizQuestions) {
             const payload = {
@@ -64,6 +76,12 @@ export default function AddQuizModule() {
                         withCredentials: true
                     }
                 );
+                console.log("Quiz created successfully");
+                setSnackbarState({
+                    open: true,
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                });
             } catch (error) {
                 console.error("Error saving quiz:", error);
             }
@@ -81,8 +99,6 @@ export default function AddQuizModule() {
 
             <Input label="Modul Kürzel" {...register("moduleName")} className="mb-3 w-full"/>
 
-            <Input label="Ersteller" {...register("creatorName")} className="mb-3 w-full"/>
-
             {fields.map((question, qIndex) => (
                 <div key={question.id} className="mb-3 w-full">
                     <Input
@@ -95,7 +111,7 @@ export default function AddQuizModule() {
                         <Controller
                             control={control}
                             name={`quizQuestions.${qIndex}.correctAnswerIndex`}
-                            defaultValue={0} // Standardwert auf 0 setzen
+                            defaultValue={0}
                             render={({field}) => (
                                 <RadioGroup
                                     value={field.value}
@@ -159,6 +175,14 @@ export default function AddQuizModule() {
                     Weitere Frage hinzufügen
                 </Button>
             </div>
+            <Snackbar
+                anchorOrigin={{vertical, horizontal}}
+                open={open}
+                onClose={handleClose}
+                message="Frage erfolgreich gespeichert"
+                key={vertical + horizontal}
+            />
         </form>
+
     );
 }
