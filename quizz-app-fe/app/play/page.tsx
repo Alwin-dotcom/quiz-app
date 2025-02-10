@@ -1,5 +1,5 @@
 'use client'
-import {useState, useEffect} from "react";
+import {useState, useEffect, useMemo} from "react";
 import axios from "axios";
 import Link from "next/link";
 import {
@@ -26,10 +26,9 @@ const ModuleTable = () => {
     const rowsPerPage = 6;
     const pages = Math.ceil(modules.length / rowsPerPage);
 
-    const items = React.useMemo(() => {
+    const items = useMemo(() => {
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
-
         return modules.slice(start, end);
     }, [page, modules]);
 
@@ -39,19 +38,29 @@ const ModuleTable = () => {
                 "http://localhost:8080/quiz-app/resources/question-answer",
                 {
                     headers: {
-                        Authorization: "Basic " + btoa(`${localStorage.getItem("username")}:${localStorage.getItem("password")}`)
+                        Authorization:
+                            "Basic " +
+                            btoa(
+                                `${localStorage.getItem("username")}:${localStorage.getItem("password")}`
+                            ),
                     },
-                    withCredentials: true
+                    withCredentials: true,
                 }
             );
+
+            // Es wird nur gezählt, wenn die Frage als approved markiert ist.
             const moduleCounts: { [key: string]: number } = {};
             response.data.forEach((question: any) => {
-                const {module} = question;
-                if (!moduleCounts[module]) {
-                    moduleCounts[module] = 0;
+                // Hier wird geprüft, ob die Frage approved ist.
+                if (question.status === "APPROVED") {
+                    const {module} = question;
+                    if (!moduleCounts[module]) {
+                        moduleCounts[module] = 0;
+                    }
+                    moduleCounts[module]++;
                 }
-                moduleCounts[module]++;
             });
+
             const formattedData: Page[] = Object.keys(moduleCounts).map((module) => ({
                 name: module,
                 numberOfQuestions: moduleCounts[module],
@@ -72,7 +81,7 @@ const ModuleTable = () => {
                 Quiz auswählen
             </h1>
 
-            <div className="flex flex-row gap-3 min-w-[70%] ">
+            <div className="flex flex-row gap-3 min-w-[70%]">
                 <Table
                     align={"center"}
                     bottomContent={
@@ -87,7 +96,8 @@ const ModuleTable = () => {
                                 onChange={(page) => setPage(page)}
                             />
                         </div>
-                    }>
+                    }
+                >
                     <TableHeader>
                         <TableColumn>Modul</TableColumn>
                         <TableColumn>Anzahl Fragen</TableColumn>
@@ -102,7 +112,6 @@ const ModuleTable = () => {
                                     <Link href={`/play/${module.name}`} passHref legacyBehavior>
                                         <Button>
                                             <PlayArrowIcon/>
-
                                         </Button>
                                     </Link>
                                 </TableCell>

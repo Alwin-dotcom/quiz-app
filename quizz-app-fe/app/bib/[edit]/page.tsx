@@ -189,12 +189,10 @@ const EditModulePage = () => {
                                         {...statusField}
                                         label="Status"
                                         variant="outlined"
-                                        disabled={isCreator} // Falls der User der Creator ist, wird der Select deaktiviert
+                                        disabled={isCreator}
                                     >
                                         <MenuItem value="APPROVED">APPROVED</MenuItem>
                                         <MenuItem value="REJECTED">REJECTED</MenuItem>
-                                        <MenuItem value="DRAFT">DRAFT</MenuItem>
-                                        <MenuItem value="">None</MenuItem>
                                     </Select>
                                 )}
                             />
