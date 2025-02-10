@@ -17,7 +17,8 @@ export default function RootLayout({children,}: Readonly<{ children: React.React
 
     const pathname = usePathname();
 
-    const showSidebar = pathname !== "/login";
+    const showSidebar = pathname !== "/";
+    const showUserInfo = pathname !== "/";
 
     return (
 
@@ -30,7 +31,7 @@ export default function RootLayout({children,}: Readonly<{ children: React.React
                         <Sidebar/>
                     </div>
                 )}
-                <UserInfo></UserInfo>
+                {showUserInfo && <UserInfo></UserInfo>}
                 <div className={`flex-1 ${showSidebar ? "ml-64" : ""} overflow-y-auto `}>
                     <Providers>
                         {children}

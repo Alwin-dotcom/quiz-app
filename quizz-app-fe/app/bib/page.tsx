@@ -36,6 +36,9 @@ const ModuleTable = () => {
     React.useEffect(() => {
         axios.get('http://localhost:8080/quiz-app/resources/question-answer',
             {
+                headers: {
+                    Authorization: "Basic " + btoa(`${localStorage.getItem("username")}:${localStorage.getItem("password")}`)
+                },
                 withCredentials: true
             })
             .then(response => {

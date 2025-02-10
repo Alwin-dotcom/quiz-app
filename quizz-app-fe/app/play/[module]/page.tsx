@@ -30,7 +30,12 @@ const QuizPage = () => {
         try {
             const response = await axios.get(
                 `http://localhost:8080/quiz-app/resources/question-answer/modules/${module}`,
-                {withCredentials: true}
+                {
+                    headers: {
+                        Authorization: "Basic " + btoa(`${localStorage.getItem("username")}:${localStorage.getItem("password")}`)
+                    },
+                    withCredentials: true
+                }
             );
             setQuestions(response.data);
             console.log("Response:", response.data);
@@ -69,7 +74,11 @@ const QuizPage = () => {
         try {
             const ranksResponse = await axios.get(
                 "http://localhost:8080/quiz-app/resources/user/ranks",
-                {withCredentials: true}
+                {
+                    headers: {
+                        Authorization: "Basic " + btoa(`${localStorage.getItem("username")}:${localStorage.getItem("password")}`)
+                    }, withCredentials: true
+                }
             );
 
             const ranksResponseData = ranksResponse.data;
@@ -98,7 +107,12 @@ const QuizPage = () => {
             const response = await axios.post(
                 "http://localhost:8080/quiz-app/resources/user/rank",
                 payload,
-                {withCredentials: true}
+                {
+
+                    headers: {
+                        Authorization: "Basic " + btoa(`${localStorage.getItem("username")}:${localStorage.getItem("password")}`)
+                    }, withCredentials: true
+                }
             );
             console.log("Score wurde gepostet. Response:", response);
         } catch (error) {

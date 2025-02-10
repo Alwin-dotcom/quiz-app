@@ -1,5 +1,6 @@
 import {createContext, useContext, useEffect, useState, ReactNode} from "react";
 import axios from "axios";
+import {usePathname} from "next/navigation";
 
 interface User {
     email: string;
@@ -15,10 +16,15 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({children}: { children: ReactNode }) => {
     const [userInfo, setUserInfo] = useState<User | null>(null);
+    const pathname = usePathname();
 
     const fetchUserInfo = async () => {
         try {
             const response = await axios.get("http://localhost:8080/quiz-app/resources/user/info", {
+
+                headers: {
+                    Authorization: "Basic " + btoa(`${localStorage.getItem("username")}:${localStorage.getItem("password")}`)
+                },
                 withCredentials: true,
             });
             console.log("Data", response.data);
@@ -29,8 +35,10 @@ export const UserProvider = ({children}: { children: ReactNode }) => {
     };
 
     useEffect(() => {
-        fetchUserInfo();
-    }, []);
+        if (pathname !== "/") {
+            fetchUserInfo();
+        }
+    }, [pathname]);
 
     return (
         <UserContext.Provider value={{userInfo, fetchUserInfo}}>

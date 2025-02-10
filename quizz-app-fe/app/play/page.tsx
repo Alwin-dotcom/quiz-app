@@ -37,7 +37,12 @@ const ModuleTable = () => {
         try {
             const response = await axios.get(
                 "http://localhost:8080/quiz-app/resources/question-answer",
-                {withCredentials: true}
+                {
+                    headers: {
+                        Authorization: "Basic " + btoa(`${localStorage.getItem("username")}:${localStorage.getItem("password")}`)
+                    },
+                    withCredentials: true
+                }
             );
             const moduleCounts: { [key: string]: number } = {};
             response.data.forEach((question: any) => {

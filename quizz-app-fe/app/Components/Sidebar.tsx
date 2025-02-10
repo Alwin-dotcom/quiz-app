@@ -16,7 +16,7 @@ const Sidebar = () => (
 
         {/* Navigation */}
         <nav className="flex-1 px-2 py-4 flex flex-col justify-center items-center gap-4">
-            <Link href="/" legacyBehavior>
+            <Link href="/home" legacyBehavior>
                 <Button
                     className="w-1/2 mx-auto flex flex-col items-center border-2 border-white
                 rounded px-4 py-2 text-white hover:bg-hoverBlue focus:ring-2 focus:ring-white"

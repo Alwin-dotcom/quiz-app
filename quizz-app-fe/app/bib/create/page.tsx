@@ -57,7 +57,12 @@ export default function AddQuizModule() {
                 await axios.post(
                     "http://localhost:8080/quiz-app/resources/question-answer",
                     payload,
-                    {withCredentials: true}
+                    {
+                        headers: {
+                            Authorization: "Basic " + btoa(`${localStorage.getItem("username")}:${localStorage.getItem("password")}`)
+                        },
+                        withCredentials: true
+                    }
                 );
             } catch (error) {
                 console.error("Error saving quiz:", error);
