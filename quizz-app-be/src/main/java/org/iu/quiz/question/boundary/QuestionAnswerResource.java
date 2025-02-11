@@ -73,8 +73,8 @@ public class QuestionAnswerResource {
   @POST
   @Path("/{id}/APPROVED")
   @Transactional
-  public Response approveQuestionAnswer(@PathParam("id") String id) {
-    final var questionAnswer = questionService.approveQuestionAnswer(id);
+  public Response approveQuestionAnswer(@PathParam("id") String id, @Context SecurityContext securityContext) {
+    final var questionAnswer = questionService.approveQuestionAnswer(id, securityContext.getUserPrincipal().getName());
     if (Objects.nonNull(questionAnswer)) {
       return Response.ok().entity(questionAnswer).build();
     } else {
@@ -85,8 +85,8 @@ public class QuestionAnswerResource {
   @POST
   @Path("/{id}/REJECTED")
   @Transactional
-  public Response rejectQuestionAnswer(@PathParam("id") String id) {
-    final var questionAnswer = questionService.rejectQuestionAnswer(id);
+  public Response rejectQuestionAnswer(@PathParam("id") String id,  @Context SecurityContext securityContext) {
+    final var questionAnswer = questionService.rejectQuestionAnswer(id, securityContext.getUserPrincipal().getName());
     if (Objects.nonNull(questionAnswer)) {
       return Response.ok().entity(questionAnswer).build();
     } else {
