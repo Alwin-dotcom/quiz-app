@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.iu.quiz.Control;
+import org.iu.quiz.exceptions.BusinessValidationException;
+import org.iu.quiz.exceptions.ValidationException;
 import org.iu.quiz.question.entity.QuestionAnswer;
 import org.iu.quiz.question.entity.Status;
 
@@ -62,6 +64,7 @@ public class QuestionService {
           questionAnswer.answers,
           questionAnswer.module,
           questionAnswer.id);
+      QuestionAnswer.flush();
       return QuestionAnswer.findById(questionAnswer.id);
     } catch (Exception e) {
       System.out.println("Error during updating questionAnswer");
@@ -69,21 +72,31 @@ public class QuestionService {
     }
   }
 
-  public QuestionAnswer approveQuestionAnswer(String id){
-    try{
-      QuestionAnswer.update("status=?1 where id =?2", Status.APPROVED, id);
-      return QuestionAnswer.findById(id);
-    }catch (Exception e){
+  public QuestionAnswer approveQuestionAnswer(String id, String username) {
+    try {
+      final var questionAnswer = (QuestionAnswer) QuestionAnswer.findById(id);
+      if (username.equals(questionAnswer.creator)) {
+        throw new BusinessValidationException("Approver can not be the creator");
+      }
+      questionAnswer.status=Status.APPROVED;
+      questionAnswer.persistAndFlush();
+      return questionAnswer;
+    } catch (Exception e) {
       System.err.println("Error approving questionAnswer: " + e.getMessage());
       return null;
     }
   }
 
-  public QuestionAnswer rejectQuestionAnswer(String id){
-    try{
-      QuestionAnswer.update("status=?1 where id =?2", Status.REJECTED, id);
-      return QuestionAnswer.findById(id);
-    }catch (Exception e){
+  public QuestionAnswer rejectQuestionAnswer(String id, String username) {
+    try {
+      final var questionAnswer = (QuestionAnswer) QuestionAnswer.findById(id);
+      if (username.equals(questionAnswer.creator)) {
+        throw new BusinessValidationException("Approver can not be the creator");
+      }
+      questionAnswer.status=Status.REJECTED;
+      questionAnswer.persistAndFlush();
+      return questionAnswer;
+    } catch (Exception e) {
       System.err.println("Error rejecting questionAnswer: " + e.getMessage());
       return null;
     }
