@@ -11,7 +11,7 @@ import {
     MenuItem,
     Select,
     Snackbar,
-    SnackbarOrigin
+    SnackbarOrigin,
 } from "@mui/material";
 import {useUser} from "@/app/Context/UserContext";
 
@@ -21,7 +21,7 @@ interface Answer {
 }
 
 interface Question {
-    id?: number;
+    questionId?: number;
     question: string;
     answers: Answer[];
     correctAnswerIndex: number | null;
@@ -66,7 +66,7 @@ const EditModulePage = () => {
                 )
                 .then((response) => {
                     const questions: Question[] = response.data.map((item: any) => ({
-                        id: item.id,
+                        questionId: item.id,
                         question: item.question,
                         answers: item.answers.map((ans: any) => ({
                             answer: ans.answer,
@@ -90,8 +90,8 @@ const EditModulePage = () => {
 
     const [snackbarState, setSnackbarState] = React.useState<State>({
         open: false,
-        vertical: 'top',
-        horizontal: 'center',
+        vertical: "top",
+        horizontal: "center",
     });
     const {vertical, horizontal, open} = snackbarState;
 
@@ -99,13 +99,44 @@ const EditModulePage = () => {
         setSnackbarState((prev) => ({...prev, open: false}));
     };
 
+    const updateStatus = async (
+        questionId: number,
+        status: "APPROVED" | "REJECTED"
+    ) => {
+        try {
+            await axios.post(
+                `http://localhost:8080/quiz-app/resources/question-answer/${questionId}/${status}`,
+                null,
+                {
+                    headers: {
+                        Authorization:
+                            "Basic " +
+                            btoa(
+                                `${localStorage.getItem("username")}:${localStorage.getItem("password")}`
+                            ),
+                    },
+                    withCredentials: true,
+                }
+            );
+            console.log(
+                `Status für Frage ${questionId} erfolgreich auf ${status} gesetzt`
+            );
+            setSnackbarState({
+                open: true,
+                vertical: "bottom",
+                horizontal: "right",
+            });
+        } catch (error) {
+            console.error("Error updating status:", error);
+        }
+    };
+
     const updateQuestionAnswer = async (questionIndex: number) => {
         const currentValues = getValues(`quizQuestions.${questionIndex}`);
         const payload = {
-            id: currentValues.id,
+            id: currentValues.questionId,
             module: moduleName,
             question: currentValues.question,
-            status: currentValues.status,
             answers: currentValues.answers.map((ans: Answer, index: number) => ({
                 answer: ans.answer,
                 isCorrect: currentValues.correctAnswerIndex === index,
@@ -130,8 +161,8 @@ const EditModulePage = () => {
             console.log("Quiz updated successfully");
             setSnackbarState({
                 open: true,
-                vertical: 'bottom',
-                horizontal: 'right',
+                vertical: "bottom",
+                horizontal: "right",
             });
         } catch (error) {
             console.error("Error updating quiz:", error);
@@ -141,10 +172,9 @@ const EditModulePage = () => {
     const onSubmit = async (data: FormValues) => {
         for (const [index, question] of data.quizQuestions.entries()) {
             const payload = {
-                id: question.id,
+                id: question.questionId,
                 module: moduleName,
                 question: question.question,
-                status: question.status,
                 answers: question.answers.map((ans, idx) => ({
                     answer: ans.answer,
                     isCorrect: question.correctAnswerIndex === idx,
@@ -208,7 +238,10 @@ const EditModulePage = () => {
                                                     )}
                                                     className="flex-1 mr-2"
                                                 />
-                                                <Radio value={aIndex} label={`Antwort ${aIndex + 1}`}/>
+                                                <Radio
+                                                    value={aIndex}
+                                                    label={`Antwort ${aIndex + 1}`}
+                                                />
                                             </div>
                                         ))}
                                     </RadioGroup>
@@ -226,6 +259,16 @@ const EditModulePage = () => {
                                             label="Status"
                                             variant="outlined"
                                             disabled={isCreator}
+                                            onChange={(e) => {
+                                                const newStatus = e.target.value as "APPROVED" | "REJECTED";
+                                                statusField.onChange(e);
+                                                const currentQuestion = getValues(`quizQuestions.${qIndex}`);
+                                                if (currentQuestion && currentQuestion.questionId) {
+                                                    updateStatus(currentQuestion.questionId, newStatus);
+                                                } else {
+                                                    console.error("Frage-ID nicht gefunden!");
+                                                }
+                                            }}
                                         >
                                             <MenuItem value="APPROVED">APPROVED</MenuItem>
                                             <MenuItem value="REJECTED">REJECTED</MenuItem>
