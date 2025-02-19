@@ -71,6 +71,10 @@
             <artifactId>lombok</artifactId>
             <version>1.18.34</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.quarkus</groupId>-->
+<!--            <artifactId>quarkus-container-image-podman</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5</artifactId>
@@ -136,6 +140,31 @@
                         <maven.home>${maven.home}</maven.home>
                     </systemPropertyVariables>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-fe</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/src/main/webapp</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <addDefaultExcludes>true</addDefaultExcludes>
+                            <resources>
+                                <resource>
+                                    <directory>../quizz-app-fe/.next</directory>
+                                    <includes>
+                                        <include>*</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
