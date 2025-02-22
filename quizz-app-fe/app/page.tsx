@@ -1,54 +1,34 @@
 import React from 'react'
-import LeaderboardIcon from '@mui/icons-material/Leaderboard';
-import Button from "@mui/material/Button";
-import ListItem from "@/app/Components/ListItem";
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import Link from "next/link";
+import Image from 'next/image'
+import LoginForm from './Components/LoginForm'
 
 
-const bestenliste = [
-    {id: 1, name: "Ali"},
-    {id: 2, name: "Alwin"},
-    {id: 3, name: "Anni"},
-    {id: 4, name: "Freddy"},
-    {id: 5, name: "Lena"},
-    {id: 6, name: "Max"},
-    {id: 7, name: "Emma"},
-    {id: 8, name: "Lukas"},
-
-];
-
-const page = () => {
+const Page = () => {
     return (
-        <div>
-            <div>
-                <div className="flex  items-center justify-center mt-[250px] ">
-                    <ListItem items={bestenliste} key={module.id}/>
+        <div className="flex h-screen">
+            <div className="bg-seaBlue w-1/2 flex items-center justify-center">
+                <div className="text-white font-bold text-2xl text-center">
+                    <Image className="ml-5" src="/logo.svg" alt="Logo" width={200} height={200}/>
+                    <p>Spielend leicht</p>
+                    <p>dein Wissen</p>
+                    <p>Abfragen</p>
                 </div>
             </div>
 
-            <div className="flex justify-center mt-10 mb-10 ">
+            {/* Rechtes Div - Weißer Bereich */}
+            <div className="w-1/2 flex flex-col items-center  justify-center">
+                <h1 className="text-5xl text-seaBlue font-bold mb-4">Willkommen</h1>
 
-                <Link href="/play" legacyBehavior>
-                    <Button
-                        startIcon={<PlayArrowIcon/>}
-                        sx={{
-                            width: 200,
-                            height: 50,
-                            backgroundColor: "#060440",
-                            borderRadius: 5,
-                            py: 3.5
-                        }} variant="contained">
 
-                        Ein Quiz starten
-                    </Button>
-                </Link>
+                <div className="flex flex-col items-center justify-center mt-20 ">
+                    <h2 className="text-2xl text-seaBlue">Login</h2>
+                    <LoginForm/>
+                </div>
 
             </div>
-
 
         </div>
     )
 }
 
-export default page
+export default Page

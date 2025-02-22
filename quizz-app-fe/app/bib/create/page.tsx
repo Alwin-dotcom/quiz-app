@@ -1,197 +1,144 @@
-"use client";
-
-import {useState} from "react";
-import {
-    Box,
-    Button,
-    TextField,
-    Typography,
-    Switch,
-    FormControlLabel,
-} from "@mui/material";
+'use client';
+import React from "react";
+import {useForm, useFieldArray, Controller} from "react-hook-form";
+import {Input, RadioGroup, Radio} from "@heroui/react";
+import {Button, Snackbar} from "@mui/material";
 import axios from "axios";
 
 interface Answer {
     text: string;
-    isCorrect: boolean;
 }
 
 interface Question {
     text: string;
     answers: Answer[];
-    correctAnswerIndex: number;
+    correctAnswerIndex: number | null;
+}
+
+interface FormValues {
+    moduleName: string;
+    creatorName: string;
+    quizQuestions: Question[];
 }
 
 export default function AddQuizModule() {
-    const [moduleName, setModuleName] = useState("");
-    const [creatorName, setCreatorName] = useState("");
-    const [quizQuestions, setQuizQuestions] = useState<Question[]>([{
-        text: "",
-        answers: Array(4).fill({text: "", isCorrect: false}),
-        correctAnswerIndex: 0,
-    },
-    ]);
+    const {register, control, handleSubmit} = useForm<FormValues>({
+        defaultValues: {
+            moduleName: "",
+            creatorName: "",
+            quizQuestions: [
+                {
+                    text: "",
+                    answers: Array.from({length: 4}, () => ({text: ""})),
+                    correctAnswerIndex: 0,
+                },
+            ],
+        },
+    });
 
-    const addQuestion = () => {
-        setQuizQuestions((prevQuestions) => [
-            ...prevQuestions,
-            {
-                text: "",
-                answers: Array(4).fill({text: "", isCorrect: false}),
-                correctAnswerIndex: 0,
-            },
-        ]);
-    };
-    const updateQuestionText = (questionIndex: number, newText: string) => {
-        const updatedQuestions = [...quizQuestions];
-        updatedQuestions[questionIndex].text = newText;
-        setQuizQuestions(updatedQuestions);
-    };
+    const {fields, append} = useFieldArray({
+        control,
+        name: "quizQuestions",
+    });
 
-    const setCorrectAnswer = (questionIndex: number, answerIndex: number) => {
-        setQuizQuestions((prevQuestions) =>
-            prevQuestions.map((question, qIndex) =>
-                qIndex === questionIndex ? {...question, correctAnswerIndex: answerIndex} : question
-            )
-        );
+
+    const [snackbarState, setSnackbarState] = React.useState<State>({
+        open: false,
+        vertical: 'top',
+        horizontal: 'center',
+    });
+    const {vertical, horizontal, open} = snackbarState;
+
+    const handleClose = () => {
+        setSnackbarState((prev) => ({...prev, open: false}));
     };
 
-    const updateAnswerText = (questionIndex: number, answerIndex: number, newText: string) => {
-        setQuizQuestions((prevQuestions) =>
-            prevQuestions.map((question, qIndex) =>
-                qIndex === questionIndex
-                    ? {
-                        ...question,
-                        answers: question.answers.map((answer, aIndex) =>
-                            aIndex === answerIndex ? {...answer, text: newText} : answer
-                        ),
+    const onSubmit = async (data: FormValues) => {
+        for (const question of data.quizQuestions) {
+            const payload = {
+                module: data.moduleName,
+                creator: data.creatorName,
+                question: question.text,
+                answers: question.answers.map((answer, index) => ({
+                    answer: answer.text,
+                    isCorrect: question.correctAnswerIndex === index,
+                })),
+            };
+            try {
+                console.log("Sending payload:", payload);
+                await axios.post(
+                    "http://localhost:8080/quiz-app/resources/question-answer",
+                    payload,
+                    {
+                        headers: {
+                            Authorization: "Basic " + btoa(`${localStorage.getItem("username")}:${localStorage.getItem("password")}`)
+                        },
+                        withCredentials: true
                     }
-                    : question
-            )
-        );
-    };
-
-    const submitQuiz = async () => {
-        const quizPayload = {
-            moduleName,
-            creator: creatorName,
-            questions: quizQuestions.map((question) => ({
-                questionText: question.text,
-                answers: question.answers,
-            })),
-        };
-
-        try {
-            const response = await axios.post(
-                "http://localhost:8080/quiz-app/resources/question-answer",
-                quizPayload
-            );
-            console.log("Quiz saved successfully:", response.data);
-        } catch (error) {
-            console.error("Error saving quiz:", error);
+                );
+                console.log("Quiz created successfully");
+                setSnackbarState({
+                    open: true,
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                });
+            } catch (error) {
+                console.error("Error saving quiz:", error);
+            }
         }
     };
 
     return (
-        <Box
-            className="shadow-md"
-            sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                mt: 5,
-                p: 3,
-                borderRadius: 3,
-                width: "60%",
-                mx: "auto",
-                backgroundColor: "#f9f9f9",
-            }}
+        <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="shadow-md flex flex-col items-center mt-20 p-3 rounded-md w-3/5 mx-auto bg-[#0000] "
         >
-            <Typography
-                className="text-seaBlue"
-                variant="h4"
-                sx={{mb: 3}}
-            >
+            <h4 className="text-2xl text-seaBlue font-bold mb-3 text-center">
                 Fragen hinzufügen
-            </Typography>
+            </h4>
 
-            <TextField
-                label="Modul Kürzel"
-                value={moduleName}
-                onChange={(e) => setModuleName(e.target.value)}
-                sx={{mb: 3, width: "100%"}}
-            />
+            <Input label="Modul Kürzel" {...register("moduleName")} className="mb-3 w-full"/>
 
-            <TextField
-                label="Ersteller"
-                value={creatorName}
-                onChange={(e) => setCreatorName(e.target.value)}
-                sx={{mb: 3, width: "100%"}}
-            />
-
-            {/*Fragen-Felder*/}
-            {quizQuestions.map((question, questionIndex) => (
-                <Box key={questionIndex} sx={{mb: 3, width: "100%"}}>
-                    <TextField
-                        label={`Frage ${questionIndex + 1}`}
-                        value={question.text}
-                        onChange={(e) => updateQuestionText(questionIndex, e.target.value)}
-                        sx={{mb: 2, width: "100%"}}
+            {fields.map((question, qIndex) => (
+                <div key={question.id} className="mb-3 w-full">
+                    <Input
+                        label={`Frage ${qIndex + 1}`}
+                        {...register(`quizQuestions.${qIndex}.text` as const)}
+                        className="mb-2 w-full"
                     />
 
-                    {/*Anwortfelder*/}
-                    {question.answers.map((answer, answerIndex) => (
-                        <Box
-                            key={answerIndex}
-                            sx={{display: "flex", alignItems: "center", mb: 1}}
-                        >
-                            <TextField
-                                label={`Antwort ${answerIndex + 1}`}
-                                value={answer.text}
-                                onChange={(e) =>
-                                    updateAnswerText(questionIndex, answerIndex, e.target.value)
-                                }
-                                sx={{flex: 1, mr: 2}}
-                            />
-                            <FormControlLabel
-                                control={
-                                    <Switch
-                                        checked={
-                                            question.correctAnswerIndex === answerIndex
-                                        }
-                                        onChange={() =>
-                                            setCorrectAnswer(questionIndex, answerIndex)
-                                        }
-                                        color="secondary"
-                                    />
-                                }
-                                label="Correct Answer"
-                            />
-                        </Box>
-                    ))}
-                    {/*Speichern-Button*/}
-                    <Box className="flex flex-row justify-center items-center w-full mb-3">
-                        <Button
-                            onClick={submitQuiz}
-                            sx={{
-                                width: 200,
-                                height: 50,
-                                backgroundColor: "#060440",
-                                borderRadius: 5,
-                                py: 3.5,
-                                mt: 5,
-                            }}
-                            variant="contained"
-                        >
-                            Frage speichern
-                        </Button>
-                    </Box>
-                </Box>
+                    <div>
+                        <Controller
+                            control={control}
+                            name={`quizQuestions.${qIndex}.correctAnswerIndex`}
+                            defaultValue={0}
+                            render={({field}) => (
+                                <RadioGroup
+                                    value={field.value}
+                                    onValueChange={field.onChange}
+                                >
+                                    {question.answers.map((_, aIndex) => (
+                                        <div key={aIndex} className="flex items-center mb-1">
+                                            <Input
+                                                label={`Antwort ${aIndex + 1}`}
+                                                {...register(
+                                                    `quizQuestions.${qIndex}.answers.${aIndex}.text` as const
+                                                )}
+                                                className="flex-1 mr-2"
+                                            />
+                                            <Radio value={aIndex} label={`Antwort ${aIndex + 1}`}/>
+                                        </div>
+                                    ))}
+                                </RadioGroup>
+                            )}
+                        />
+                    </div>
+                </div>
             ))}
 
-            <Box className="flex flex-row justify-center items-center w-full mb-3">
+            <div className="flex flex-row justify-center items-center w-full mb-3">
                 <Button
-                    onClick={addQuestion}
+                    type="submit"
                     sx={{
                         width: 200,
                         height: 50,
@@ -202,10 +149,40 @@ export default function AddQuizModule() {
                     }}
                     variant="contained"
                 >
-                    Weitere Frage hinzufpügen
+                    Quiz speichern
                 </Button>
-            </Box>
+            </div>
 
-        </Box>
+            <div className="flex flex-row justify-center items-center w-full mb-3">
+                <Button
+                    onClick={() =>
+                        append({
+                            text: "",
+                            answers: Array.from({length: 4}, () => ({text: ""})),
+                            correctAnswerIndex: 0,
+                        })
+                    }
+                    sx={{
+                        width: 200,
+                        height: 50,
+                        backgroundColor: "#060440",
+                        borderRadius: 5,
+                        py: 3.5,
+                        mt: 5,
+                    }}
+                    variant="contained"
+                >
+                    Weitere Frage hinzufügen
+                </Button>
+            </div>
+            <Snackbar
+                anchorOrigin={{vertical, horizontal}}
+                open={open}
+                onClose={handleClose}
+                message="Frage erfolgreich gespeichert"
+                key={vertical + horizontal}
+            />
+        </form>
+
     );
 }

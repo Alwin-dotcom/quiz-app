@@ -1,175 +1,118 @@
-'use client'
+'use client';
 import * as React from 'react';
-import Paper from '@mui/material/Paper';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
-import TableRow from '@mui/material/TableRow';
-import {useState} from "react";
-import Button from "@mui/material/Button";
-import AddIcon from '@mui/icons-material/Add';
+import axios from 'axios';
+import {Button} from "@heroui/button";
 import Link from "next/link";
+import {
+    Table,
+    TableHeader,
+    TableBody,
+    TableColumn,
+    TableRow,
+    TableCell,
+} from '@heroui/table';
+import {EditIcon} from "@heroui/shared-icons";
+import MuiButton from "@/app/Components/MUIButton";
+import {Pagination} from "@heroui/react";
 
-
-interface Column {
-    id: 'modul' | 'kzl' | 'questions';
-    label: string;
-    minWidth?: number;
-    align?: 'right';
-}
-
-const columns: readonly Column[] = [
-    {id: 'modul', label: 'Modul', minWidth: 170},
-    {id: 'kzl', label: 'Kürzel', minWidth: 170, align: 'right'},
-    {id: 'questions', label: 'Anzahl Fragen', minWidth: 170, align: 'right'}
-];
-
-interface Data {
-    modul: string;
-    kzl: string;
+interface Module {
+    name: string;
     questions: number;
 }
 
-function createData(
-    modul: string,
-    kzl: string,
-    questions: number,
-): Data {
-    return {modul, kzl, questions};
-}
+const ModuleTable = () => {
+    const [modules, setModules] = React.useState<Module[]>([]);
+    const [page, setPage] = React.useState(1);
+    const rowsPerPage = 6;
+    const pages = Math.ceil(modules.length / rowsPerPage);
 
-const rows = [
-    createData('India', 'INAS', 1324171354),
-    createData('China', 'CNFV', 1403500365),
-    createData('Italy', 'ITEF', 60483973),
-    createData('United States', 'USEF', 327167434),
-    createData('Canada', 'CACF', 37602103),
-    createData('Australia', 'AUVF', 25475400),
-    createData('Germany', 'DEVD', 83019200),
-    createData('Ireland', 'IEVDS', 4857000),
-    createData('Mexico', 'MXVW', 126577691),
-    createData('Japan', 'JPCS', 126317000),
+    const items = React.useMemo(() => {
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
 
-];
+        return modules.slice(start, end);
+    }, [page, modules]);
 
-export default function EnhancedTable() {
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState<number>(10);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [selectedRow, setSelectedRow] = useState<null | Data>(null);
+    React.useEffect(() => {
+        axios.get('http://localhost:8080/quiz-app/resources/question-answer',
+            {
+                headers: {
+                    Authorization: "Basic " + btoa(`${localStorage.getItem("username")}:${localStorage.getItem("password")}`)
+                },
+                withCredentials: true
+            })
+            .then(response => {
+                const moduleCounts: { [key: string]: number } = {};
+                response.data.forEach((question: any) => {
+                    const {module} = question;
+                    if (!moduleCounts[module]) {
+                        moduleCounts[module] = 0;
+                    }
+                    moduleCounts[module]++;
+                });
 
-    const handleChangePage = (event: unknown, newPage: number) => {
-        setPage(newPage);
-    };
+                const formattedData = Object.keys(moduleCounts).map(module => ({
+                    name: module,
+                    questions: moduleCounts[module],
+                }));
 
-    const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRowsPerPage(+event.target.value);
-        setPage(0);
-    };
-
-    const handleMenuOpen = (event: React.MouseEvent<HTMLElement>, row: Data) => {
-        setAnchorEl(event.currentTarget);
-        setSelectedRow(row);
-    };
-
-    const handleMenuClose = () => {
-        setAnchorEl(null);
-        setSelectedRow(null);
-    };
-
-    const handleEdit = () => {
-        console.log("Bearbeiten:", selectedRow);
-        handleMenuClose();
-    };
-
-    const handleDelete = () => {
-        console.log("Löschen:", selectedRow);
-        handleMenuClose();
-    };
+                setModules(formattedData);
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    }, []);
 
     return (
-        <div className="flex justify-center flex-col items-center h-screen">
-            <div className="flex items-center justify-center">
-                <h1 className="text-2xl text-seaBlue text-center font-bold mb-4">Bibliothek</h1>
-            </div>
-            <Paper sx={{
-                width: '80%',
-                overflow: 'hidden',
-                borderRadius: 5,
-                boxShadow: 'xl',
-                backgroundColor: '#D9D9D9',
-                border: '1px solid #D9D9D9'
-            }}>
-                <TableContainer sx={{maxHeight: 440}}>
-                    <Table stickyHeader aria-label="sticky table">
-                        <TableHead>
-                            <TableRow>
-                                {columns.map((column) => (
-                                    <TableCell
-                                        key={column.id}
-                                        align={column.align}
-                                        style={{minWidth: column.minWidth}}
-                                    >
-                                        {column.label}
-                                    </TableCell>
-                                ))}
+        <div className="flex flex-col items-center justify-center  p-4 mt-[147px]">
+            <h1 className="text-2xl text-seaBlue font-bold mb-4 text-center">
+                Quiz auswählen
+            </h1>
+
+            <div className="flex flex-col justify-center items-center   min-w-[70%]">
+                <Table
+                    align={"center"}
+                    bottomContent={
+                        <div className="flex w-full justify-center">
+                            <Pagination
+                                isCompact
+                                showControls
+                                showShadow
+                                color="secondary"
+                                page={page}
+                                total={pages}
+                                onChange={(page) => setPage(page)}
+                            />
+                        </div>
+                    }>
+                    <TableHeader>
+                        <TableColumn>Modul</TableColumn>
+                        <TableColumn>Anzahl Fragen</TableColumn>
+                        <TableColumn>Fragen bearbeiten</TableColumn>
+                    </TableHeader>
+                    <TableBody items={items}>
+                        {items.map((module, index) => (
+                            <TableRow key={index}>
+                                <TableCell>{module.name}</TableCell>
+                                <TableCell>{module.questions}</TableCell>
+                                <TableCell>
+                                    <Link href={`/bib/${module.name}`}>
+                                        <Button><EditIcon></EditIcon></Button>
+                                    </Link>
+                                </TableCell>
                             </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {rows.map((row) => {
-                                return (
-                                    <TableRow hover role="checkbox" tabIndex={-1} key={row.modul}>
-                                        {columns.map((column) => {
-                                            const value = row[column.id];
-                                            return (
-                                                <TableCell key={column.id} align={column.align}>
-                                                    {value}
-                                                </TableCell>
-                                            );
-                                        })}
-
-                                    </TableRow>
-                                );
-                            })}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[10, 25, 100]}
-                    component="div"
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
-
-            </Paper>
-            <div className="flex flec-col items-center justify-center gap-4">
-                <Link
-                    href="/bib/create"
-                    legacyBehavior>
-                    <Button
-                        startIcon={<AddIcon/>}
-                        sx={{
-                            width: 200,
-                            height: 50,
-                            backgroundColor: "#060440",
-                            borderRadius: 5,
-                            py: 3.5,
-                            mt: 5
-                        }} variant="contained">
-                        Frage hinzufügen
-                    </Button>
-                </Link>
-
-
+                        ))}
+                    </TableBody>
+                </Table>
             </div>
 
-        </div>
+            <Link href="/bib/create" legacyBehavior>
+                <div className="mt-10">
+                    <MuiButton>
+                    </MuiButton>
+                </div>
 
+            </Link>
+        </div>
     );
-}
+};
+
+export default ModuleTable;
