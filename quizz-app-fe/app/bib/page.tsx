@@ -43,6 +43,7 @@ const ModuleTable = () => {
             })
             .then(response => {
                 const moduleCounts: { [key: string]: number } = {};
+                // eslint-disable-next-line
                 response.data.forEach((question: any) => {
                     const {module} = question;
                     if (!moduleCounts[module]) {

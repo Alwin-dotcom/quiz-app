@@ -50,6 +50,7 @@ const ModuleTable = () => {
 
             // Es wird nur gezählt, wenn die Frage als approved markiert ist.
             const moduleCounts: { [key: string]: number } = {};
+            // eslint-disable-next-line
             response.data.forEach((question: any) => {
                 // Hier wird geprüft, ob die Frage approved ist.
                 if (question.status === "APPROVED") {

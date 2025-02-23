@@ -82,6 +82,7 @@ const QuizPage = () => {
             );
 
             const ranksResponseData = ranksResponse.data;
+            // eslint-disable-next-line
             const userRank = ranksResponseData.find((responseObject: any) => {
                 return responseObject?.email === userInfo?.email && responseObject?.userName === userInfo?.userName;
             });

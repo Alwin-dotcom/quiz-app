@@ -1,5 +1,4 @@
 'use client'
-import React, {useEffect, useState} from 'react'
 import {useUser} from "@/app/Context/UserContext";
 
 const UserInfo = () => {

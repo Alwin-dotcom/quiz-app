@@ -65,13 +65,16 @@ const EditModulePage = () => {
                     }
                 )
                 .then((response) => {
+                    // eslint-disable-next-line
                     const questions: Question[] = response.data.map((item: any) => ({
                         questionId: item.id,
                         question: item.question,
+                        // eslint-disable-next-line
                         answers: item.answers.map((ans: any) => ({
                             answer: ans.answer,
                             isCorrect: ans.isCorrect,
                         })),
+                    // eslint-disable-next-line
                         correctAnswerIndex: item.answers.findIndex((ans: any) => ans.isCorrect),
                         status: item.status,
                         creator: item.creator,
