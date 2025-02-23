@@ -71,10 +71,10 @@
             <artifactId>lombok</artifactId>
             <version>1.18.34</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.quarkus</groupId>-->
-<!--            <artifactId>quarkus-container-image-podman</artifactId>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-container-image-podman</artifactId>
+        </dependency>
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-junit5</artifactId>
@@ -151,14 +151,18 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/src/main/webapp</outputDirectory>
+                            <outputDirectory>src/main/META-INF/resources</outputDirectory>
                             <overwrite>true</overwrite>
                             <addDefaultExcludes>true</addDefaultExcludes>
                             <resources>
                                 <resource>
                                     <directory>../quizz-app-fe/.next</directory>
                                     <includes>
-                                        <include>*</include>
+                                        <include>**/*</include>
+                                        <include>cache</include>
+                                        <include>server</include>
+                                        <include>static</include>
+                                        <include>types</include>
                                     </includes>
                                 </resource>
                             </resources>

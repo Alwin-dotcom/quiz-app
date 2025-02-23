@@ -85,3 +85,6 @@ https://medium.com/@pawanpg0963/run-postgresql-with-podman-as-docker-container-8
 Then run:
 
 podman run --name postgres -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=changeme -p 5432:5432 -v /var/lib/data -d postgres
+
+### BUILD DOCKER IMAGE
+podman build -f src/main/docker/Dockerfile.jvm -t alwinfurst/quiz-app:1.0.0 .
