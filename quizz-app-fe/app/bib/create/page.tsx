@@ -1,8 +1,8 @@
 'use client';
-import React from "react";
+import React, {useState} from "react";
 import {useForm, useFieldArray, Controller} from "react-hook-form";
 import {Input, RadioGroup, Radio} from "@heroui/react";
-import {Button, Snackbar} from "@mui/material";
+import {Button, Snackbar, SnackbarOrigin} from "@mui/material";
 import axios from "axios";
 
 interface Answer {
@@ -19,6 +19,10 @@ interface FormValues {
     moduleName: string;
     creatorName: string;
     quizQuestions: Question[];
+}
+
+interface State extends SnackbarOrigin {
+    open: boolean;
 }
 
 export default function AddQuizModule() {
@@ -42,11 +46,12 @@ export default function AddQuizModule() {
     });
 
 
-    const [snackbarState, setSnackbarState] = React.useState<State>({
+    const [snackbarState, setSnackbarState] = useState<State>({
         open: false,
         vertical: 'top',
         horizontal: 'center',
     });
+
     const {vertical, horizontal, open} = snackbarState;
 
     const handleClose = () => {
@@ -114,7 +119,7 @@ export default function AddQuizModule() {
                             defaultValue={0}
                             render={({field}) => (
                                 <RadioGroup
-                                    value={field.value}
+                                    value={field.value !== null ? String(field.value) : null}
                                     onValueChange={field.onChange}
                                 >
                                     {question.answers.map((_, aIndex) => (
@@ -126,7 +131,10 @@ export default function AddQuizModule() {
                                                 )}
                                                 className="flex-1 mr-2"
                                             />
-                                            <Radio value={aIndex} label={`Antwort ${aIndex + 1}`}/>
+                                            <Radio
+                                                value={String(aIndex)}
+                                                {...({label: `Antwort ${aIndex + 1}`} as any)}
+                                            />
                                         </div>
                                     ))}
                                 </RadioGroup>

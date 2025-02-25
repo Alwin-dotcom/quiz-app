@@ -74,7 +74,7 @@ const EditModulePage = () => {
                             answer: ans.answer,
                             isCorrect: ans.isCorrect,
                         })),
-                    // eslint-disable-next-line
+                        // eslint-disable-next-line
                         correctAnswerIndex: item.answers.findIndex((ans: any) => ans.isCorrect),
                         status: item.status,
                         creator: item.creator,
@@ -229,7 +229,7 @@ const EditModulePage = () => {
                                 defaultValue={0}
                                 render={({field: radioField}) => (
                                     <RadioGroup
-                                        value={radioField.value}
+                                        value={radioField.value !== null ? String(radioField.value) : null}
                                         onValueChange={radioField.onChange}
                                     >
                                         {field.answers.map((_, aIndex) => (
@@ -242,8 +242,8 @@ const EditModulePage = () => {
                                                     className="flex-1 mr-2"
                                                 />
                                                 <Radio
-                                                    value={aIndex}
-                                                    label={`Antwort ${aIndex + 1}`}
+                                                    value={String(aIndex)}
+                                                    {...({label: `Antwort ${aIndex + 1}`} as any)}
                                                 />
                                             </div>
                                         ))}
