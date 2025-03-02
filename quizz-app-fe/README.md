@@ -34,3 +34,15 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+### BUILD DOCKER IMAGE
+podman build --platform linux/amd64 -f Dockerfile -t alwinfurst/quiz-app-fe:1.0.0 .
+
+### TAG DOCKER IMAGE
+podman tag be3f1d92951830be2b1810591133f6d719c67b38504f8e90c1bf3bf2684f1203 quizappiu.azurecr.io/quizapp-fe:1.0.0
+
+### AZURE ACR Login
+DOCKER_COMMAND=podman \
+az acr login --name quizappiu.azurecr.io
+
