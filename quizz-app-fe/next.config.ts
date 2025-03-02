@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
     async headers() {
         return [
             {
+                env: {
+                    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080',
+                },
                 source: '/api/:path*',
                 headers: [
                     {
