@@ -1,6 +1,5 @@
 'use client'
 import {useState, useEffect, useMemo} from "react";
-import axios from "axios";
 import Link from "next/link";
 import {
     Table,
@@ -14,6 +13,7 @@ import {Button} from "@heroui/button";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import * as React from "react";
 import {Pagination} from "@heroui/react";
+import api from '../api';
 
 interface Page {
     name: string;
@@ -34,8 +34,8 @@ const ModuleTable = () => {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get(
-                "http://localhost:8080/quiz-app/resources/question-answer",
+            const response = await api.get(
+                "/quiz-app/resources/question-answer",
                 {
                     headers: {
                         Authorization:

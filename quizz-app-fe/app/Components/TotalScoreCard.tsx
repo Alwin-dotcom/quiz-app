@@ -10,7 +10,7 @@ const TotalScoreCard: React.FC<TotalScoreProps> = ({totalScore}) => {
         <Card className="max-w-md mx-auto mb-5">
             <CardHeader>
                 <h2 className="text-1xl font-bold text-seaBlue text-center">
-                    TOTAL USER POINTS
+                    PUNKTE GESAMT
                 </h2>
             </CardHeader>
             <CardBody className="flex justify-center items-center">

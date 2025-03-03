@@ -4,6 +4,8 @@ import LoginForm from './Components/LoginForm'
 
 
 const Page = () => {
+
+    console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
     return (
         <div className="flex h-screen">
             <div className="bg-seaBlue w-1/2 flex items-center justify-center">
@@ -29,6 +31,8 @@ const Page = () => {
 
         </div>
     )
+
+
 }
 
 export default Page

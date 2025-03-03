@@ -1,7 +1,6 @@
 'use client'
 import React, {useEffect, useState} from 'react';
 import Link from 'next/link';
-import axios from 'axios';
 import {Button} from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import {
@@ -14,6 +13,7 @@ import {
 } from '@heroui/table';
 import {Pagination} from "@heroui/react";
 import TotalScoreCard from "@/app/Components/TotalScoreCard";
+import api from '../api';
 
 
 interface UserRank {
@@ -40,8 +40,8 @@ const Page = () => {
 
     const fetchTotalRank = async () => {
         try {
-            const response = await axios.get(
-                'http://localhost:8080/quiz-app/resources/user/ranks/total',
+            const response = await api.get(
+                '/quiz-app/resources/user/ranks/total',
                 {
                     headers: {
                         Authorization: "Basic " + btoa(`${localStorage.getItem("username")}:${localStorage.getItem("password")}`)
@@ -58,8 +58,8 @@ const Page = () => {
 
     const fetchRanks = async () => {
         try {
-            const response = await axios.get(
-                'http://localhost:8080/quiz-app/resources/user/ranks',
+            const response = await api.get(
+                '/quiz-app/resources/user/ranks',
 
                 {
                     headers: {
