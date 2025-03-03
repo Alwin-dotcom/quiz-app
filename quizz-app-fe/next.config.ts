@@ -1,18 +1,16 @@
-// next.config.js
 import type {NextConfig} from 'next';
 
 const nextConfig: NextConfig = {
-
     output: 'standalone',
     eslint: {
         ignoreDuringBuilds: true,
     },
+    env: {
+        NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080',
+    },
     async headers() {
         return [
             {
-                env: {
-                    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080',
-                },
                 source: '/api/:path*',
                 headers: [
                     {
@@ -29,14 +27,11 @@ const nextConfig: NextConfig = {
                     },
                     {
                         key: 'Access-Control-Allow-Headers',
-                        value:
-                            'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version',
+                        value: 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version',
                     },
                 ],
             },
         ];
-
-
     },
 };
 
