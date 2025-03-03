@@ -26,7 +26,6 @@ const QuizPage = () => {
     const [score, setScore] = useState<number>(0);
 
     const {userInfo} = useUser();
-
     const fetchQuestions = async () => {
         try {
             const response = await api.get(
@@ -38,10 +37,13 @@ const QuizPage = () => {
                     withCredentials: true
                 }
             );
-            setQuestions(response.data);
-            console.log("Response:", response.data);
+
+            const approvedQuestions = response.data.filter((question: any) => question.status === "APPROVED");
+
+            setQuestions(approvedQuestions);
+            console.log("Gefilterte approved Fragen:", approvedQuestions);
         } catch (error) {
-            console.error('Error fetching questions:', error);
+            console.error('Fehler beim Laden der Fragen:', error);
         }
     };
 
