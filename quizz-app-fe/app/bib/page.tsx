@@ -1,6 +1,5 @@
 'use client';
 import * as React from 'react';
-import axios from 'axios';
 import {Button} from "@heroui/button";
 import Link from "next/link";
 import {
@@ -14,6 +13,7 @@ import {
 import {EditIcon} from "@heroui/shared-icons";
 import MuiButton from "@/app/Components/MUIButton";
 import {Pagination} from "@heroui/react";
+import api from "../api";
 
 interface Module {
     name: string;
@@ -34,7 +34,7 @@ const ModuleTable = () => {
     }, [page, modules]);
 
     React.useEffect(() => {
-        axios.get('http://localhost:8080/quiz-app/resources/question-answer',
+        api.get('/quiz-app/resources/question-answer',
             {
                 headers: {
                     Authorization: "Basic " + btoa(`${localStorage.getItem("username")}:${localStorage.getItem("password")}`)

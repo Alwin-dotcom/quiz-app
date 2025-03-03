@@ -1,6 +1,6 @@
 import {createContext, useContext, useEffect, useState, ReactNode} from "react";
-import axios from "axios";
 import {usePathname} from "next/navigation";
+import api from "../api";
 
 interface User {
     email: string;
@@ -20,7 +20,7 @@ export const UserProvider = ({children}: { children: ReactNode }) => {
 
     const fetchUserInfo = async () => {
         try {
-            const response = await axios.get("http://localhost:8080/quiz-app/resources/user/info", {
+            const response = await api.get("/quiz-app/resources/user/info", {
 
                 headers: {
                     Authorization: "Basic " + btoa(`${localStorage.getItem("username")}:${localStorage.getItem("password")}`)

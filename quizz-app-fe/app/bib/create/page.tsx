@@ -3,7 +3,7 @@ import React, {useState} from "react";
 import {useForm, useFieldArray, Controller} from "react-hook-form";
 import {Input, RadioGroup, Radio} from "@heroui/react";
 import {Button, Snackbar, SnackbarOrigin} from "@mui/material";
-import axios from "axios";
+import api from "../../api";
 
 interface Answer {
     text: string;
@@ -71,8 +71,8 @@ export default function AddQuizModule() {
             };
             try {
                 console.log("Sending payload:", payload);
-                await axios.post(
-                    "http://localhost:8080/quiz-app/resources/question-answer",
+                await api.post(
+                    "/quiz-app/resources/question-answer",
                     payload,
                     {
                         headers: {

@@ -3,9 +3,9 @@ import React from "react";
 import {Controller, useForm} from "react-hook-form";
 import {Box, Button, TextField} from "@mui/material";
 import {useRouter} from "next/navigation";
-import axios from "axios";
 import {LoginFormValues, loginSchema} from "@/Schemas/schema";
 import {zodResolver} from "@hookform/resolvers/zod";
+import api from "../api";
 
 const LoginForm = () => {
     const router = useRouter();
@@ -21,8 +21,8 @@ const LoginForm = () => {
 
     const onSubmit = async (data: LoginFormValues) => {
         try {
-            const response = await axios.get(
-                "http://localhost:8080/quiz-app/resources/user/info",
+            const response = await api.get(
+                "/quiz-app/resources/user/info",
                 {
                     auth: {
                         username: data.username,

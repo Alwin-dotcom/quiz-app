@@ -1,9 +1,10 @@
 'use client';
 import {useState, useEffect} from 'react';
 import {useParams, useRouter} from 'next/navigation';
-import axios from 'axios';
 import {Button} from "@mui/material";
 import {useUser} from "@/app/Context/UserContext";
+import api from '../../api';
+
 
 interface Answer {
     answer: string;
@@ -25,11 +26,10 @@ const QuizPage = () => {
     const [score, setScore] = useState<number>(0);
 
     const {userInfo} = useUser();
-
     const fetchQuestions = async () => {
         try {
-            const response = await axios.get(
-                `http://localhost:8080/quiz-app/resources/question-answer/modules/${module}`,
+            const response = await api.get(
+                `/quiz-app/resources/question-answer/modules/${module}`,
                 {
                     headers: {
                         Authorization: "Basic " + btoa(`${localStorage.getItem("username")}:${localStorage.getItem("password")}`)
@@ -37,10 +37,13 @@ const QuizPage = () => {
                     withCredentials: true
                 }
             );
-            setQuestions(response.data);
-            console.log("Response:", response.data);
+
+            const approvedQuestions = response.data.filter((question: any) => question.status === "APPROVED");
+
+            setQuestions(approvedQuestions);
+            console.log("Gefilterte approved Fragen:", approvedQuestions);
         } catch (error) {
-            console.error('Error fetching questions:', error);
+            console.error('Fehler beim Laden der Fragen:', error);
         }
     };
 
@@ -72,8 +75,8 @@ const QuizPage = () => {
 
     const postScore = async () => {
         try {
-            const ranksResponse = await axios.get(
-                "http://localhost:8080/quiz-app/resources/user/ranks",
+            const ranksResponse = await api.get(
+                "/quiz-app/resources/user/ranks",
                 {
                     headers: {
                         Authorization: "Basic " + btoa(`${localStorage.getItem("username")}:${localStorage.getItem("password")}`)
@@ -105,8 +108,8 @@ const QuizPage = () => {
                 };
             }
 
-            const response = await axios.post(
-                "http://localhost:8080/quiz-app/resources/user/rank",
+            const response = await api.post(
+                "/quiz-app/resources/user/rank",
                 payload,
                 {
 

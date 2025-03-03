@@ -14,6 +14,7 @@ import {
     SnackbarOrigin,
 } from "@mui/material";
 import {useUser} from "@/app/Context/UserContext";
+import api from "../../api";
 
 interface Answer {
     answer: string;
@@ -50,9 +51,9 @@ const EditModulePage = () => {
 
     useEffect(() => {
         if (moduleName) {
-            axios
+            api
                 .get(
-                    `http://localhost:8080/quiz-app/resources/question-answer/modules/${moduleName}`,
+                    `/quiz-app/resources/question-answer/modules/${moduleName}`,
                     {
                         headers: {
                             Authorization:
@@ -107,8 +108,8 @@ const EditModulePage = () => {
         status: "APPROVED" | "REJECTED"
     ) => {
         try {
-            await axios.post(
-                `http://localhost:8080/quiz-app/resources/question-answer/${questionId}/${status}`,
+            await api.post(
+                `/quiz-app/resources/question-answer/${questionId}/${status}`,
                 null,
                 {
                     headers: {
@@ -147,8 +148,8 @@ const EditModulePage = () => {
         };
         try {
             console.log("Sending payload:", payload);
-            await axios.put(
-                "http://localhost:8080/quiz-app/resources/question-answer/",
+            await api.put(
+                "/quiz-app/resources/question-answer/",
                 payload,
                 {
                     headers: {
@@ -185,8 +186,8 @@ const EditModulePage = () => {
             };
             try {
                 console.log("Sending payload for question", index, payload);
-                await axios.put(
-                    "http://localhost:8080/quiz-app/resources/question-answer/",
+                await api.put(
+                    "/quiz-app/resources/question-answer/",
                     payload,
                     {
                         headers: {
