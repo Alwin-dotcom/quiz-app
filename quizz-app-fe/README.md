@@ -46,3 +46,5 @@ podman tag be3f1d92951830be2b1810591133f6d719c67b38504f8e90c1bf3bf2684f1203 quiz
 DOCKER_COMMAND=podman \
 az acr login --name quizappiu.azurecr.io
 
+### PUSH DOCKER IMAGE
+podman push quizappiu.azurecr.io/quizapp-fe:1.0.0
