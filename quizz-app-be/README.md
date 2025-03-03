@@ -86,12 +86,18 @@ Then run:
 
 podman run --name postgres -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=changeme -p 5432:5432 -v /var/lib/data -d postgres
 
+
+
+### QUIZAPP BE
 ### BUILD DOCKER IMAGE
 podman build --platform linux/amd64 -f src/main/docker/Dockerfile.jvm -t alwinfurst/quiz-app:1.0.0 .
 
 ### TAG DOCKER IMAGE
 podman tag 055cf85b28849f7694466a83e2cf2b21c213a96679b30ec43eb8e439830d5777 quizappiu.azurecr.io/quizapp:1.0.0
 
+
+### RUN DOCKER IMAGE LOCALLY
+podman run -i -p 8080:8080  5782069e52c8
 
 ### AZURE ACR Login
 DOCKER_COMMAND=podman \
