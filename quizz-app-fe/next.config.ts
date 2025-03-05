@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
         ignoreDuringBuilds: true,
     },
     env: {
-        NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080',
+        NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
     },
     async headers() {
         return [
@@ -19,7 +19,7 @@ const nextConfig: NextConfig = {
                     },
                     {
                         key: 'Access-Control-Allow-Origin',
-                        value: 'http://localhost:3000',
+                        value: '*',
                     },
                     {
                         key: 'Access-Control-Allow-Methods',
