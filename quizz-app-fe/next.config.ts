@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
         ignoreDuringBuilds: true,
     },
     env: {
-        NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+        NEXT_PUBLIC_API_URL: "https://backend.icyrock-507037c6.germanywestcentral.azurecontainerapps.io",
     },
     async headers() {
         return [
