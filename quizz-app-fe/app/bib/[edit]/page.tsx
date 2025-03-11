@@ -1,7 +1,6 @@
 'use client';
 import React, {useEffect} from "react";
 import {useParams} from "next/navigation";
-import axios from "axios";
 import {useForm, useFieldArray, Controller} from "react-hook-form";
 import {Input, RadioGroup, Radio} from "@heroui/react";
 import {
@@ -231,7 +230,7 @@ const EditModulePage = () => {
                                 render={({field: radioField}) => (
                                     <RadioGroup
                                         value={radioField.value !== null ? String(radioField.value) : null}
-                                        onValueChange={radioField.onChange}
+                                        onValueChange={(val) => radioField.onChange(parseInt(val, 10))}
                                     >
                                         {field.answers.map((_, aIndex) => (
                                             <div key={aIndex} className="flex items-center mb-1">
