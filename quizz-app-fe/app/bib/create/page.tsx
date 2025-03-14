@@ -45,6 +45,7 @@ export default function AddQuizModule() {
         name: "quizQuestions",
     });
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const [snackbarState, setSnackbarState] = useState<State>({
         open: false,
@@ -59,37 +60,47 @@ export default function AddQuizModule() {
     };
 
     const onSubmit = async (data: FormValues) => {
-        for (const question of data.quizQuestions) {
-            const payload = {
-                module: data.moduleName,
-                creator: data.creatorName,
-                question: question.text,
-                answers: question.answers.map((answer, index) => ({
-                    answer: answer.text,
-                    isCorrect: question.correctAnswerIndex === index,
-                })),
-            };
-            try {
+        if (isSubmitting) return;
+        setIsSubmitting(true);
+        try {
+            for (const question of data.quizQuestions) {
+                const payload = {
+                    module: data.moduleName,
+                    creator: data.creatorName,
+                    question: question.text,
+                    answers: question.answers.map((answer, index) => ({
+                        answer: answer.text,
+                        isCorrect: question.correctAnswerIndex === index,
+                    })),
+                };
                 console.log("Sending payload:", payload);
                 await api.post(
                     "/quiz-app/resources/question-answer",
                     payload,
                     {
                         headers: {
-                            Authorization: "Basic " + btoa(`${localStorage.getItem("username")}:${localStorage.getItem("password")}`)
+                            Authorization:
+                                "Basic " +
+                                btoa(
+                                    `${localStorage.getItem("username")}:${localStorage.getItem(
+                                        "password"
+                                    )}`
+                                ),
                         },
-                        withCredentials: true
+                        withCredentials: true,
                     }
                 );
                 console.log("Quiz created successfully");
-                setSnackbarState({
-                    open: true,
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                });
-            } catch (error) {
-                console.error("Error saving quiz:", error);
             }
+            setSnackbarState({
+                open: true,
+                vertical: "bottom",
+                horizontal: "right",
+            });
+        } catch (error) {
+            console.error("Error saving quiz:", error);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -120,7 +131,7 @@ export default function AddQuizModule() {
                             render={({field}) => (
                                 <RadioGroup
                                     value={field.value !== null ? String(field.value) : null}
-                                    onValueChange={field.onChange}
+                                    onValueChange={(val) => field.onChange(parseInt(val, 10))}
                                 >
                                     {question.answers.map((_, aIndex) => (
                                         <div key={aIndex} className="flex items-center mb-1">
