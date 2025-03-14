@@ -105,3 +105,19 @@ az acr login --name quizappiu.azurecr.io
 
 ### PUSH DOCKER IMAGE TO REGISTRY
 podman push quizappiu.azurecr.io/quizapp:1.0.0
+
+
+### CREATE DB CONTAINER AT AZURE
+az login
+az containerapp create \
+--name database \
+--resource-group quizapp-rg \
+--environment managedEnvironment-quizapprg-b719  \
+--image docker.io/postgres:15 \
+--secrets pgpass="changeme" \
+--env-vars POSTGRES_USER="admin" POSTGRES_DB="postgres" POSTGRES_PASSWORD=secretref:pgpass \
+--transport tcp \
+--target-port 5432 \
+--ingress internal \
+--min-replicas 1 \
+--max-replicas 1
